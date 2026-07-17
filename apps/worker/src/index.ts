@@ -1,6 +1,6 @@
 import { Queue, Worker } from "bullmq";
 import IORedis from "ioredis";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Role } from "@prisma/client";
 
 const connection = new IORedis(process.env.REDIS_URL ?? "redis://localhost:6379", {
   maxRetriesPerRequest: null,
@@ -27,11 +27,42 @@ async function handleAnamnesisReminder(userId: string) {
   console.log(`[worker] lembrete de anamnese criado para o usuário ${userId}`);
 }
 
+async function resolveCampaignAudience(audience: string): Promise<string[]> {
+  if (audience === "all") {
+    const clients = await prisma.user.findMany({ where: { role: Role.CLIENT }, select: { id: true } });
+    return clients.map((c) => c.id);
+  }
+  const subs = await prisma.subscription.findMany({
+    where: { status: "ACTIVE", plan: { code: audience as any } },
+    select: { userId: true },
+  });
+  return [...new Set(subs.map((s) => s.userId))];
+}
+
+async function handleCampaign(payload: { title: string; body: string; audience: string }) {
+  const userIds = await resolveCampaignAudience(payload.audience);
+  await prisma.notification.createMany({
+    data: userIds.map((userId) => ({
+      userId,
+      type: "PERSONALIZADA" as const,
+      title: payload.title,
+      body: payload.body,
+      audienceSegment: payload.audience,
+      sentAt: new Date(),
+    })),
+  });
+  console.log(`[worker] campanha "${payload.title}" enviada para ${userIds.length} cliente(s)`);
+}
+
 const worker = new Worker(
   "reminders",
   async (job) => {
     if (job.name === "anamnesis-incomplete") {
       await handleAnamnesisReminder(job.data.userId);
+      return;
+    }
+    if (job.name === "send-campaign") {
+      await handleCampaign(job.data);
       return;
     }
     console.log(`[worker] job desconhecido ignorado: ${job.name}`);

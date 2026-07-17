@@ -20,6 +20,9 @@ import { AdminClientDetailPage } from "./pages/admin/AdminClientDetailPage";
 import { AdminFoodsPage } from "./pages/admin/AdminFoodsPage";
 import { AdminExercisesPage } from "./pages/admin/AdminExercisesPage";
 import { AdminLibraryPage } from "./pages/admin/AdminLibraryPage";
+import { AdminNotificationsPage } from "./pages/admin/AdminNotificationsPage";
+import { AdminCouponsPage } from "./pages/admin/AdminCouponsPage";
+import { AdminSubscriptionsPage } from "./pages/admin/AdminSubscriptionsPage";
 import { ProtectedRoute } from "./lib/ProtectedRoute";
 
 function Placeholder({ title }: { title: string }) {
@@ -185,6 +188,31 @@ export function App() {
         element={
           <ProtectedRoute role="PROFESSIONAL">
             <AdminLibraryPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/notificacoes"
+        element={
+          <ProtectedRoute role="PROFESSIONAL">
+            <AdminNotificationsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/cupons"
+        element={
+          <ProtectedRoute role="PROFESSIONAL">
+            <AdminCouponsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/assinaturas"
+        element={
+          <ProtectedRoute role="PROFESSIONAL">
+            <AdminSubscriptionsPage />
           </ProtectedRoute>
         }
       />

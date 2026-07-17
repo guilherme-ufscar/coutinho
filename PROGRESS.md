@@ -12,7 +12,7 @@ Status por fase (ver `escopo.md` §11 para DoD completo).
 | 5 | Painel do profissional | ✅ Concluída |
 | 6 | Área do cliente | ✅ Concluída |
 | 7 | Evolução + Check-ins | ✅ Concluída |
-| 8 | Admin sem código | ⏳ Pendente |
+| 8 | Admin sem código | ✅ Concluída |
 | 9 | APK (Capacitor) | ⏳ Pendente |
 | 10 | Hardening + LGPD + Go-live | ⏳ Pendente |
 
@@ -87,6 +87,16 @@ Status por fase (ver `escopo.md` §11 para DoD completo).
 - [x] `LineChart` minimalista no design system (SVG, uma cor de destaque, grade discreta) reutilizado nos 7 gráficos de medida
 - [x] Front: `/app/evolucao` (gráficos peso/cintura/abdômen/braço/coxa/massa muscular/massa de gordura + "Registrar avaliação", reaproveitando o `AssessmentsModule` da Fase 4) e `/app/checkin` (pendentes + histórico)
 - [x] **DoD**: e2e via curl — cliente registra nova medida (histórico cresce de 1 para 2), profissional cria check-in, cliente responde (`answeredAt` preenchido)
+- [x] Commit + push
+
+## Fase 8 — Admin sem código — ✅ Concluída (2026-07-17)
+
+- [x] `AdminNotificationsModule`: campanhas com segmentação (todos / por plano) e agendamento — envio imediato cria `Notification` direto; agendamento futuro enfileira job BullMQ (`send-campaign`) processado pelo worker no horário certo
+- [x] Cupons: CRUD admin (`/coupons/admin`) além da validação pública já existente
+- [x] Planos: `PATCH /plans/admin/:id` (preço/features/tagline editáveis)
+- [x] Assinaturas: `AdminSubscriptionsModule` — listar todas, trocar plano e status de qualquer assinatura
+- [x] Front: `/admin/notificacoes` (compor campanha + histórico), `/admin/cupons` (criar/ativar/desativar), `/admin/assinaturas` (trocar plano/status por assinatura)
+- [x] **DoD**: e2e via curl — notificação imediata (4 destinatários), notificação agendada (worker processou 5s depois e confirmou no log), cupom criado, assinatura trocada de plano (ACTIVE → ELITE)
 - [x] Commit + push
 
 ## Pendências / bloqueios conhecidos

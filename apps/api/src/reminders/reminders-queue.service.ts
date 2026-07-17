@@ -33,6 +33,12 @@ export class RemindersQueueService implements OnModuleDestroy {
     await this.queue.remove(anamnesisJobId(userId)).catch(() => undefined);
   }
 
+  /** Notificação/campanha agendada pelo admin (Fase 8) — o worker resolve o público e cria as Notifications no horário. */
+  async scheduleCampaign(payload: { title: string; body: string; audience: string; sendAt: string }) {
+    const delay = Math.max(0, new Date(payload.sendAt).getTime() - Date.now());
+    await this.queue.add("send-campaign", payload, { delay, removeOnComplete: true, removeOnFail: true });
+  }
+
   async onModuleDestroy() {
     await this.queue.close();
     this.connection.disconnect();

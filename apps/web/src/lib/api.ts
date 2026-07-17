@@ -213,6 +213,39 @@ export const checkinsApi = {
     request<CheckIn>(`/checkins/me/${id}`, { method: "PATCH", body: JSON.stringify({ answer }) }, token),
 };
 
+export const adminNotificationsApi = {
+  list: (token: string) => request<any[]>("/admin/notifications", {}, token),
+  create: (data: { title: string; body: string; audience: string; scheduledFor?: string }, token: string) =>
+    request<any>("/admin/notifications", { method: "POST", body: JSON.stringify(data) }, token),
+};
+
+export interface Coupon {
+  id: string;
+  code: string;
+  percentOff: number;
+  active: boolean;
+  expiresAt: string | null;
+}
+
+export const adminCouponsApi = {
+  list: (token: string) => request<Coupon[]>("/coupons/admin/all", {}, token),
+  create: (data: { code: string; percentOff: number; expiresAt?: string }, token: string) =>
+    request<Coupon>("/coupons/admin", { method: "POST", body: JSON.stringify(data) }, token),
+  update: (id: string, data: Partial<Pick<Coupon, "active" | "percentOff">>, token: string) =>
+    request<Coupon>(`/coupons/admin/${id}`, { method: "PATCH", body: JSON.stringify(data) }, token),
+};
+
+export const adminSubscriptionsApi = {
+  list: (token: string) => request<any[]>("/admin/subscriptions", {}, token),
+  update: (id: string, data: { status?: string; planCode?: string }, token: string) =>
+    request<any>(`/admin/subscriptions/${id}`, { method: "PATCH", body: JSON.stringify(data) }, token),
+};
+
+export const adminPlansApi = {
+  update: (id: string, data: Partial<Plan>, token: string) =>
+    request<Plan>(`/plans/admin/${id}`, { method: "PATCH", body: JSON.stringify(data) }, token),
+};
+
 export const paymentsApi = {
   checkout: (
     data: { planCode: string; period: string; couponCode?: string; method: "pix" | "cartao" },

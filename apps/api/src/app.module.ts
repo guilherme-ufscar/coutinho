@@ -16,6 +16,8 @@ import { AdminClientsModule } from "./admin-clients/admin-clients.module";
 import { NotificationsModule } from "./notifications/notifications.module";
 import { ClientModule } from "./client/client.module";
 import { CheckInsModule } from "./checkins/checkins.module";
+import { AdminNotificationsModule } from "./admin-notifications/admin-notifications.module";
+import { AdminSubscriptionsModule } from "./admin-subscriptions/admin-subscriptions.module";
 
 @Module({
   imports: [
@@ -35,6 +37,8 @@ import { CheckInsModule } from "./checkins/checkins.module";
     NotificationsModule,
     ClientModule,
     CheckInsModule,
+    AdminNotificationsModule,
+    AdminSubscriptionsModule,
   ],
   controllers: [AppController],
   providers: [],
