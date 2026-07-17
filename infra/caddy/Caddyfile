@@ -1,10 +1,6 @@
 {
 	# Local dev: certificados internos autoassinados para *.localhost.
 	local_certs
-	# Produção (VPS com aaPanel): aaPanel/Nginx termina TLS e faz proxy reverso
-	# para o Caddy em 127.0.0.1:8080 (só HTTP). Sem isso, o Caddy tenta emitir
-	# certificado próprio e falha porque não tem mais acesso direto à porta 443.
-	auto_https off
 }
 
 {$DOMAIN:localhost} {
