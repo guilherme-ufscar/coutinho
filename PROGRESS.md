@@ -9,7 +9,7 @@ Status por fase (ver `escopo.md` §11 para DoD completo).
 | 2 | Landing (3 variantes) | ✅ Concluída |
 | 3 | Auth + Planos + Pagamento | ✅ Concluída |
 | 4 | Onboarding (anamnese) | ✅ Concluída |
-| 5 | Painel do profissional | ⏳ Pendente |
+| 5 | Painel do profissional | ✅ Concluída |
 | 6 | Área do cliente | ⏳ Pendente |
 | 7 | Evolução + Check-ins | ⏳ Pendente |
 | 8 | Admin sem código | ⏳ Pendente |
@@ -58,6 +58,19 @@ Status por fase (ver `escopo.md` §11 para DoD completo).
 - [x] `AssessmentsModule` mínimo (POST/GET) para a "avaliação física inicial" da última etapa — reaproveitado pela Fase 7
 - [x] Front: wizard de 9 etapas (`/anamnese`) data-driven, com anel de continuidade como barra de progresso, retomada automática do `currentStep`, bloqueio de edição após envio
 - [x] **DoD**: e2e via curl — preencher etapa 0 → "responder depois" → retomar (GET confirma `currentStep`) → preencher até o fim → criar avaliação física → enviar (`status=ENVIADA`) → confirmar que edição pós-envio é bloqueada (400)
+- [x] Commit + push
+
+## Fase 5 — Painel do profissional — ✅ Concluída (2026-07-17)
+
+- [x] `ProfessionalGuard` (JWT + role) protegendo todas as rotas `/admin/*`
+- [x] `GET /admin/clients` (lista + status da anamnese) e `GET /admin/clients/:id` (detalhe completo)
+- [x] Bancos de Alimentos e Exercícios (CRUD, leitura pública / escrita restrita ao profissional)
+- [x] Biblioteca (receitas/artigos/vídeos/materiais) com fluxo de publicação
+- [x] Mensagens internas (thread por cliente, bidirecional)
+- [x] Montagem e publicação de plano alimentar e treino — publicar cria `Notification` (`PLANO_PUBLICADO` / `TREINO_ATUALIZADO`)
+- [x] Seeds: 52 alimentos e 53 exercícios (nomes reais, valores nutricionais aproximados — placeholder editável)
+- [x] Front: `/admin` (lista), `/admin/clientes/:id` (anamnese + builder de plano/treino + mensagens), `/admin/alimentos`, `/admin/exercicios`, `/admin/biblioteca`
+- [x] **DoD**: e2e via curl — login admin → lista clientes → monta e publica plano+treino → `Notification` confirmada no Postgres para o cliente certo → mensagens bidirecionais → RBAC bloqueia cliente em rota de admin (403)
 - [x] Commit + push
 
 ## Pendências / bloqueios conhecidos

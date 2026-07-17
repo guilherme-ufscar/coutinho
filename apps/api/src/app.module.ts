@@ -8,6 +8,11 @@ import { CouponsModule } from "./coupons/coupons.module";
 import { PaymentsModule } from "./payments/payments.module";
 import { AnamnesisModule } from "./anamnesis/anamnesis.module";
 import { AssessmentsModule } from "./assessments/assessments.module";
+import { FoodsModule } from "./foods/foods.module";
+import { ExercisesModule } from "./exercises/exercises.module";
+import { LibraryModule } from "./library/library.module";
+import { MessagesModule } from "./messages/messages.module";
+import { AdminClientsModule } from "./admin-clients/admin-clients.module";
 
 @Module({
   imports: [
@@ -19,6 +24,11 @@ import { AssessmentsModule } from "./assessments/assessments.module";
     PaymentsModule,
     AnamnesisModule,
     AssessmentsModule,
+    FoodsModule,
+    ExercisesModule,
+    LibraryModule,
+    MessagesModule,
+    AdminClientsModule,
   ],
   controllers: [AppController],
   providers: [],

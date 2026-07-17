@@ -88,6 +88,84 @@ export const assessmentsApi = {
     request("/assessments", { method: "POST", body: JSON.stringify(data) }, token),
 };
 
+export interface ClientListItem {
+  id: string;
+  name: string;
+  email: string;
+  anamnesis: { status: string; submittedAt: string | null } | null;
+  subscriptions: { status: string; plan: { name: string } }[];
+}
+
+export const adminApi = {
+  listClients: (token: string) => request<ClientListItem[]>("/admin/clients", {}, token),
+  clientDetail: (id: string, token: string) => request<any>(`/admin/clients/${id}`, {}, token),
+  createMealPlan: (clientId: string, data: { meals: any[] }, token: string) =>
+    request<any>(`/admin/clients/${clientId}/meal-plan`, { method: "POST", body: JSON.stringify(data) }, token),
+  publishMealPlan: (mealPlanId: string, token: string) =>
+    request<any>(`/admin/meal-plans/${mealPlanId}/publish`, { method: "POST" }, token),
+  createWorkout: (clientId: string, data: { letter: string; exercises: any[] }, token: string) =>
+    request<any>(`/admin/clients/${clientId}/workout`, { method: "POST", body: JSON.stringify(data) }, token),
+  publishWorkout: (workoutId: string, token: string) =>
+    request<any>(`/admin/workouts/${workoutId}/publish`, { method: "POST" }, token),
+  clientMessages: (clientId: string, token: string) => request<any>(`/admin/clients/${clientId}/messages`, {}, token),
+  replyToClient: (clientId: string, body: string, token: string) =>
+    request<any>(`/admin/clients/${clientId}/messages`, { method: "POST", body: JSON.stringify({ body }) }, token),
+};
+
+export interface FoodItem {
+  id: string;
+  name: string;
+  category: string;
+  kcal: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  notes?: string;
+}
+
+export const foodsApi = {
+  list: (search?: string) => request<FoodItem[]>(`/foods${search ? `?search=${encodeURIComponent(search)}` : ""}`),
+  create: (data: Omit<FoodItem, "id">, token: string) => request<FoodItem>("/foods", { method: "POST", body: JSON.stringify(data) }, token),
+  update: (id: string, data: Partial<FoodItem>, token: string) =>
+    request<FoodItem>(`/foods/${id}`, { method: "PATCH", body: JSON.stringify(data) }, token),
+  remove: (id: string, token: string) => request<void>(`/foods/${id}`, { method: "DELETE" }, token),
+};
+
+export interface ExerciseItem {
+  id: string;
+  name: string;
+  muscleGroup: string;
+  description?: string;
+  videoUrl?: string;
+}
+
+export const exercisesApi = {
+  list: (search?: string) => request<ExerciseItem[]>(`/exercises${search ? `?search=${encodeURIComponent(search)}` : ""}`),
+  create: (data: Omit<ExerciseItem, "id">, token: string) =>
+    request<ExerciseItem>("/exercises", { method: "POST", body: JSON.stringify(data) }, token),
+  update: (id: string, data: Partial<ExerciseItem>, token: string) =>
+    request<ExerciseItem>(`/exercises/${id}`, { method: "PATCH", body: JSON.stringify(data) }, token),
+  remove: (id: string, token: string) => request<void>(`/exercises/${id}`, { method: "DELETE" }, token),
+};
+
+export interface LibraryItem {
+  id: string;
+  type: "RECEITA" | "ARTIGO" | "VIDEO" | "MATERIAL";
+  title: string;
+  body?: string;
+  mediaUrl?: string;
+  publishedAt: string | null;
+}
+
+export const libraryApi = {
+  listPublished: (token: string) => request<LibraryItem[]>("/library", {}, token),
+  listAll: (token: string) => request<LibraryItem[]>("/library/all", {}, token),
+  create: (data: Omit<LibraryItem, "id" | "publishedAt">, token: string) =>
+    request<LibraryItem>("/library", { method: "POST", body: JSON.stringify(data) }, token),
+  publish: (id: string, token: string) => request<LibraryItem>(`/library/${id}/publish`, { method: "POST" }, token),
+  remove: (id: string, token: string) => request<void>(`/library/${id}`, { method: "DELETE" }, token),
+};
+
 export const paymentsApi = {
   checkout: (
     data: { planCode: string; period: string; couponCode?: string; method: "pix" | "cartao" },

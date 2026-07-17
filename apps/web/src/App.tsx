@@ -6,6 +6,11 @@ import { AuthCallbackPage } from "./pages/AuthCallbackPage";
 import { PlansPage } from "./pages/PlansPage";
 import { CheckoutPage } from "./pages/CheckoutPage";
 import { AnamnesisPage } from "./pages/anamnesis/AnamnesisPage";
+import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage";
+import { AdminClientDetailPage } from "./pages/admin/AdminClientDetailPage";
+import { AdminFoodsPage } from "./pages/admin/AdminFoodsPage";
+import { AdminExercisesPage } from "./pages/admin/AdminExercisesPage";
+import { AdminLibraryPage } from "./pages/admin/AdminLibraryPage";
 import { ProtectedRoute } from "./lib/ProtectedRoute";
 
 function Placeholder({ title }: { title: string }) {
@@ -69,14 +74,48 @@ export function App() {
           </ProtectedRoute>
         }
       />
+
       <Route
-        path="/admin/*"
+        path="/admin"
         element={
           <ProtectedRoute role="PROFESSIONAL">
-            <Placeholder title="Painel administrativo" />
+            <AdminDashboardPage />
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/admin/clientes/:id"
+        element={
+          <ProtectedRoute role="PROFESSIONAL">
+            <AdminClientDetailPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/alimentos"
+        element={
+          <ProtectedRoute role="PROFESSIONAL">
+            <AdminFoodsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/exercicios"
+        element={
+          <ProtectedRoute role="PROFESSIONAL">
+            <AdminExercisesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/biblioteca"
+        element={
+          <ProtectedRoute role="PROFESSIONAL">
+            <AdminLibraryPage />
+          </ProtectedRoute>
+        }
+      />
+
       <Route path="*" element={<Placeholder title="Não encontrado" />} />
     </Routes>
   );
