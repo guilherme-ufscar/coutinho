@@ -182,6 +182,37 @@ export const messagesApi = {
   send: (body: string, token: string) => request<any>("/messages/me", { method: "POST", body: JSON.stringify({ body }) }, token),
 };
 
+export interface Assessment {
+  id: string;
+  weightKg?: number;
+  waistCm?: number;
+  abdomenCm?: number;
+  armCm?: number;
+  thighCm?: number;
+  muscleMassKg?: number;
+  fatMassKg?: number;
+  recordedAt: string;
+}
+
+export const assessmentsListApi = {
+  mine: (token: string) => request<Assessment[]>("/assessments/me", {}, token),
+};
+
+export interface CheckIn {
+  id: string;
+  kind: "NUTRICAO" | "TREINO";
+  question: string;
+  answer?: string | null;
+  answeredAt?: string | null;
+  createdAt: string;
+}
+
+export const checkinsApi = {
+  mine: (token: string) => request<CheckIn[]>("/checkins/me", {}, token),
+  answer: (id: string, answer: string, token: string) =>
+    request<CheckIn>(`/checkins/me/${id}`, { method: "PATCH", body: JSON.stringify({ answer }) }, token),
+};
+
 export const paymentsApi = {
   checkout: (
     data: { planCode: string; period: string; couponCode?: string; method: "pix" | "cartao" },

@@ -8,6 +8,8 @@ const links = [
   { to: "/app/treino", label: "Treino" },
   { to: "/app/biblioteca", label: "Biblioteca" },
   { to: "/app/mensagens", label: "Mensagens" },
+  { to: "/app/evolucao", label: "Evolução" },
+  { to: "/app/checkin", label: "Check-in" },
   { to: "/app/notificacoes", label: "Notificações" },
   { to: "/app/perfil", label: "Perfil" },
 ];

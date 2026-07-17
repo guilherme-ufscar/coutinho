@@ -12,6 +12,8 @@ import { WorkoutPage } from "./pages/client/WorkoutPage";
 import { LibraryPage } from "./pages/client/LibraryPage";
 import { MessagesPage } from "./pages/client/MessagesPage";
 import { NotificationsPage } from "./pages/client/NotificationsPage";
+import { EvolutionPage } from "./pages/client/EvolutionPage";
+import { CheckInPage } from "./pages/client/CheckInPage";
 import { ProfilePage } from "./pages/client/ProfilePage";
 import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage";
 import { AdminClientDetailPage } from "./pages/admin/AdminClientDetailPage";
@@ -110,6 +112,22 @@ export function App() {
         element={
           <ProtectedRoute>
             <MessagesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/app/evolucao"
+        element={
+          <ProtectedRoute>
+            <EvolutionPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/app/checkin"
+        element={
+          <ProtectedRoute>
+            <CheckInPage />
           </ProtectedRoute>
         }
       />

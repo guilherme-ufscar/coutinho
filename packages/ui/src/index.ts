@@ -6,4 +6,5 @@ export * from "./Accordion";
 export * from "./PeriodToggle";
 export * from "./PlanCard";
 export * from "./TextField";
+export * from "./LineChart";
 export * from "./tokens";
