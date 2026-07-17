@@ -8,7 +8,7 @@ Status por fase (ver `escopo.md` §11 para DoD completo).
 | 1 | Design no Stitch | ⚠️ Pulada (tool indisponível nesta sessão — telas codadas direto dos tokens) |
 | 2 | Landing (3 variantes) | ✅ Concluída |
 | 3 | Auth + Planos + Pagamento | ✅ Concluída |
-| 4 | Onboarding (anamnese) | ⏳ Pendente |
+| 4 | Onboarding (anamnese) | ✅ Concluída |
 | 5 | Painel do profissional | ⏳ Pendente |
 | 6 | Área do cliente | ⏳ Pendente |
 | 7 | Evolução + Check-ins | ⏳ Pendente |
@@ -48,6 +48,16 @@ Status por fase (ver `escopo.md` §11 para DoD completo).
 - [x] **DoD**: e2e completo validado via curl through Caddy real — cadastro → login → checkout → assinatura `ACTIVE` no Postgres
 - [x] `docker-entrypoint.sh` roda `prisma migrate deploy` + seed automaticamente no boot do container `api`
 - [~] Validação visual/Playwright — mesmo bloqueio das fases anteriores (ver `DECISIONS.md`)
+- [x] Commit + push
+
+## Fase 4 — Onboarding (anamnese única) — ✅ Concluída (2026-07-17)
+
+- [x] Backend: `AnamnesisModule` (GET/PATCH rascunho, POST submit), schema já cobria todos os campos do escopo.md §7.1
+- [x] "Responder depois": cada PATCH reagenda um lembrete (BullMQ, 24h) via `RemindersQueueService`; submit cancela o lembrete
+- [x] Worker processa o job e cria uma `Notification` real caso a anamnese ainda esteja em rascunho (confirmado sem erros nos logs)
+- [x] `AssessmentsModule` mínimo (POST/GET) para a "avaliação física inicial" da última etapa — reaproveitado pela Fase 7
+- [x] Front: wizard de 9 etapas (`/anamnese`) data-driven, com anel de continuidade como barra de progresso, retomada automática do `currentStep`, bloqueio de edição após envio
+- [x] **DoD**: e2e via curl — preencher etapa 0 → "responder depois" → retomar (GET confirma `currentStep`) → preencher até o fim → criar avaliação física → enviar (`status=ENVIADA`) → confirmar que edição pós-envio é bloqueada (400)
 - [x] Commit + push
 
 ## Pendências / bloqueios conhecidos

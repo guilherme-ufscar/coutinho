@@ -5,6 +5,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { AuthCallbackPage } from "./pages/AuthCallbackPage";
 import { PlansPage } from "./pages/PlansPage";
 import { CheckoutPage } from "./pages/CheckoutPage";
+import { AnamnesisPage } from "./pages/anamnesis/AnamnesisPage";
 import { ProtectedRoute } from "./lib/ProtectedRoute";
 
 function Placeholder({ title }: { title: string }) {
@@ -48,6 +49,14 @@ export function App() {
         element={
           <ProtectedRoute>
             <CheckoutPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/anamnese"
+        element={
+          <ProtectedRoute>
+            <AnamnesisPage />
           </ProtectedRoute>
         }
       />

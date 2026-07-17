@@ -27,7 +27,7 @@ export function CheckoutPage() {
       const res = await paymentsApi.checkout({ planCode, period, couponCode, method }, accessToken);
       setResult(res);
       if (res.status === "APPROVED") {
-        setTimeout(() => navigate("/app"), 1800);
+        setTimeout(() => navigate("/anamnese"), 1800);
       }
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Não foi possível processar o pagamento.");

@@ -69,6 +69,25 @@ export interface CheckoutResponse {
   amount: number;
 }
 
+export interface Anamnesis {
+  id: string;
+  status: "RASCUNHO" | "ENVIADA" | "ANALISADA";
+  currentStep: number;
+  [key: string]: unknown;
+}
+
+export const anamnesisApi = {
+  getMine: (token: string) => request<Anamnesis>("/anamnesis/me", {}, token),
+  updateMine: (data: Record<string, unknown>, token: string) =>
+    request<Anamnesis>("/anamnesis/me", { method: "PATCH", body: JSON.stringify(data) }, token),
+  submitMine: (token: string) => request<Anamnesis>("/anamnesis/me/submit", { method: "POST" }, token),
+};
+
+export const assessmentsApi = {
+  create: (data: Record<string, number | undefined>, token: string) =>
+    request("/assessments", { method: "POST", body: JSON.stringify(data) }, token),
+};
+
 export const paymentsApi = {
   checkout: (
     data: { planCode: string; period: string; couponCode?: string; method: "pix" | "cartao" },
