@@ -98,6 +98,7 @@ model User {
   name         String
   role         Role      @default(CLIENT)
   consentedAt  DateTime?
+  pushToken    String?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 

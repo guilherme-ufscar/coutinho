@@ -96,6 +96,7 @@ model User {
   name         String
   role         Role      @default(CLIENT)
   consentedAt  DateTime?
+  pushToken    String? // FCM — estrutura pronta, ativação em fase posterior (escopo.md §13.0)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 

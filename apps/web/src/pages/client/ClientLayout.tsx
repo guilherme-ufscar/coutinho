@@ -1,6 +1,8 @@
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { NavLink } from "react-router-dom";
 import { ContinuityRing } from "@couthealth/ui";
+import { useAuth } from "../../lib/auth";
+import { initPushNotifications } from "../../lib/push";
 
 const links = [
   { to: "/app", label: "Início", end: true },
@@ -27,6 +29,12 @@ const navLinkStyle = ({ isActive }: { isActive: boolean }): React.CSSProperties 
 });
 
 export function ClientLayout({ children }: { children: ReactNode }) {
+  const { accessToken } = useAuth();
+
+  useEffect(() => {
+    if (accessToken) initPushNotifications(accessToken);
+  }, [accessToken]);
+
   return (
     <div className="client-shell" style={{ minHeight: "100vh", display: "flex" }}>
       <style>{`

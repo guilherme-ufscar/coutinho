@@ -24,6 +24,7 @@
     "msgpackr-extract@3.0.4": true,
     "@prisma/client@5.22.0": true,
     "@prisma/engines@5.22.0": true,
-    "prisma@5.22.0": true
+    "prisma@5.22.0": true,
+    "sharp@0.32.6": true
   }
 }

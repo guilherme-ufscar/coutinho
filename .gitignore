@@ -15,7 +15,14 @@ Thumbs.db
 /infra/postgres/data/
 /infra/minio/data/
 /screenshots/**/*.png
-android/
 ios/
 .vite/
 *.tsbuildinfo
+
+# Capacitor Android — projeto versionado, mas não os artefatos de build/SDK local
+apps/web/android/local.properties
+apps/web/android/.gradle/
+apps/web/android/app/build/
+apps/web/android/build/
+apps/web/android/captures/
+apps/web/android/**/google-services.json

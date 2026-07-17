@@ -1,6 +1,11 @@
-import { Controller, Get, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
+import { IsString } from "class-validator";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { PrismaService } from "../prisma/prisma.service";
+
+class RegisterPushTokenDto {
+  @IsString() token!: string;
+}
 
 @Controller("client")
 @UseGuards(JwtAuthGuard)
@@ -44,5 +49,12 @@ export class ClientController {
       orderBy: { letter: "asc" },
       include: { exercises: { include: { exercise: true }, orderBy: { order: "asc" } } },
     });
+  }
+
+  /** Estrutura de push pronta (FCM via Capacitor) — ativação/envio real ficam para fase posterior. */
+  @Post("push-token")
+  async registerPushToken(@Req() req: any, @Body() dto: RegisterPushTokenDto) {
+    await this.prisma.user.update({ where: { id: req.user.userId }, data: { pushToken: dto.token } });
+    return { ok: true };
   }
 }

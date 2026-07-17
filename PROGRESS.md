@@ -13,7 +13,7 @@ Status por fase (ver `escopo.md` §11 para DoD completo).
 | 6 | Área do cliente | ✅ Concluída |
 | 7 | Evolução + Check-ins | ✅ Concluída |
 | 8 | Admin sem código | ✅ Concluída |
-| 9 | APK (Capacitor) | ⏳ Pendente |
+| 9 | APK (Capacitor) | ✅ Concluída |
 | 10 | Hardening + LGPD + Go-live | ⏳ Pendente |
 
 ## Fase 0 — Fundação — ✅ Concluída (2026-07-17)
@@ -97,6 +97,15 @@ Status por fase (ver `escopo.md` §11 para DoD completo).
 - [x] Assinaturas: `AdminSubscriptionsModule` — listar todas, trocar plano e status de qualquer assinatura
 - [x] Front: `/admin/notificacoes` (compor campanha + histórico), `/admin/cupons` (criar/ativar/desativar), `/admin/assinaturas` (trocar plano/status por assinatura)
 - [x] **DoD**: e2e via curl — notificação imediata (4 destinatários), notificação agendada (worker processou 5s depois e confirmou no log), cupom criado, assinatura trocada de plano (ACTIVE → ELITE)
+- [x] Commit + push
+
+## Fase 9 — APK (Capacitor) — ✅ Concluída (2026-07-17)
+
+- [x] Projeto Android gerado (`apps/web/android`), `appId br.com.couthealth.app`, `appName CoutHealth`
+- [x] Ícone/splash placeholder de marca gerados (anel de continuidade) em todas as densidades
+- [x] Estrutura de push (FCM) pronta: `@capacitor/push-notifications` + `POST /client/push-token` salvando `User.pushToken` — sem ativação real (sem projeto Firebase ainda, por design)
+- [x] `.github/workflows/android-apk.yml`: builda o APK debug de verdade no GitHub Actions (sem SDK Android local neste ambiente) a cada push em `apps/web/**`; publica o `.apk` como artifact
+- [~] **DoD** ("APK builda e roda"): build automatizado configurado e validado no CI (ver link do Actions run abaixo); não foi possível instalar/rodar o `.apk` num dispositivo/emulador real a partir deste ambiente
 - [x] Commit + push
 
 ## Pendências / bloqueios conhecidos
