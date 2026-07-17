@@ -72,6 +72,9 @@ services:
     build:
       context: .
       dockerfile: apps/landing/Dockerfile
+      args:
+        NEXT_PUBLIC_APP_URL: https://${APP_DOMAIN:-app.localhost}
+        NEXT_PUBLIC_SITE_URL: https://${DOMAIN:-localhost}
     restart: unless-stopped
     environment:
       NODE_ENV: production

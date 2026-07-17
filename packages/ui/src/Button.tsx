@@ -1,18 +1,28 @@
-import type { ButtonHTMLAttributes } from "react";
+import type { AnchorHTMLAttributes, ButtonHTMLAttributes } from "react";
 
 type Variant = "primary" | "secondary" | "ghost";
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface CommonProps {
   variant?: Variant;
 }
 
+export type ButtonProps = CommonProps &
+  (
+    | ({ href?: undefined } & ButtonHTMLAttributes<HTMLButtonElement>)
+    | ({ href: string } & AnchorHTMLAttributes<HTMLAnchorElement>)
+  );
+
 const base: React.CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
   fontFamily: "var(--font-body)",
   fontWeight: 600,
   fontSize: "var(--fs-body-lg)",
   borderRadius: "var(--r-md)",
   padding: "12px 20px",
   cursor: "pointer",
+  textDecoration: "none",
   transition: "background var(--motion-fast), border-color var(--motion-fast), opacity var(--motion-fast)",
   border: "1px solid transparent",
 };
@@ -33,18 +43,21 @@ const variants: Record<Variant, React.CSSProperties> = {
   },
 };
 
-export function Button({ variant = "primary", style, disabled, ...props }: ButtonProps) {
+/** Renderiza como <a> quando `href` é passado (navegação, sem JS), ou <button> caso contrário. */
+export function Button({ variant = "primary", style, ...props }: ButtonProps) {
+  const combinedStyle = { ...base, ...variants[variant], ...style };
+
+  if ("href" in props && props.href !== undefined) {
+    const { href, ...anchorProps } = props;
+    return <a href={href} style={combinedStyle} {...anchorProps} />;
+  }
+
+  const { disabled, ...buttonProps } = props as ButtonHTMLAttributes<HTMLButtonElement>;
   return (
     <button
-      {...props}
+      {...buttonProps}
       disabled={disabled}
-      style={{
-        ...base,
-        ...variants[variant],
-        opacity: disabled ? 0.5 : 1,
-        cursor: disabled ? "not-allowed" : "pointer",
-        ...style,
-      }}
+      style={{ ...combinedStyle, opacity: disabled ? 0.5 : 1, cursor: disabled ? "not-allowed" : "pointer" }}
     />
   );
 }
