@@ -1,0 +1,90 @@
+/*
+  CoutHealth — Design tokens (design-stitch.md §3)
+  Dark-first, premium health-tech. Amarelo só em ação/progresso.
+*/
+:root {
+  /* Cores */
+  --ink-900: #0e0f11;
+  --ink-800: #17181b;
+  --ink-700: #222222;
+  --ink-600: #2c2e32;
+  --gray-500: #4a4f54;
+  --gray-300: #9a9da2;
+  --gray-100: #ededed;
+  --white: #ffffff;
+
+  --accent: #f7be00;
+  --accent-2: #f5b335;
+  --accent-grad: linear-gradient(90deg, #f7be00, #f5b335);
+
+  --success: #3fb98c;
+  --danger: #e5484d;
+  --info: #5b9def;
+
+  /* Tipografia */
+  --font-display: "Luxora Grotesk", "Space Grotesk", sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+
+  --fs-display-lg: 3rem;
+  --fs-display-md: 2.25rem;
+  --fs-display-sm: 1.75rem;
+  --fs-title-lg: 1.375rem;
+  --fs-title-sm: 1.125rem;
+  --fs-body-lg: 1rem;
+  --fs-body-sm: 0.9375rem;
+  --fs-caption: 0.8125rem;
+
+  /* Espaçamento */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+
+  /* Raio */
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-full: 999px;
+
+  /* Elevação / motion */
+  --elev: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 8px 24px rgba(0, 0, 0, 0.35);
+  --motion-fast: 160ms ease-out;
+  --motion-slow: 240ms ease-out;
+
+  /* Superfícies semânticas */
+  --bg-base: var(--ink-900);
+  --bg-surface: var(--ink-800);
+  --bg-card: var(--ink-700);
+  --border-hairline: var(--ink-600);
+  --text-primary: var(--white);
+  --text-secondary: var(--gray-300);
+  --text-tertiary: var(--gray-500);
+  --text-on-accent: var(--ink-900);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0ms;
+    --motion-slow: 0ms;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  margin: 0;
+}
+
+h1, h2, h3, .display {
+  font-family: var(--font-display);
+  font-weight: 700;
+}

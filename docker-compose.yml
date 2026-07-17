@@ -1,0 +1,176 @@
+name: couthealth
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+      APP_DOMAIN: ${APP_DOMAIN:-app.localhost}
+      API_DOMAIN: ${API_DOMAIN:-api.localhost}
+    volumes:
+      - ./infra/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      landing:
+        condition: service_healthy
+      web:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+    networks: [internal]
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-couthealth}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: ${POSTGRES_DB:-couthealth}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-couthealth} -d ${POSTGRES_DB:-couthealth}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [internal]
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [internal]
+
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-couthealth}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-changeme123}
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [internal]
+
+  landing:
+    build:
+      context: .
+      dockerfile: apps/landing/Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3100/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks: [internal]
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks: [internal]
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      API_PORT: 3000
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      PAYMENT_PROVIDER: ${PAYMENT_PROVIDER:-mock}
+      ASAAS_API_KEY: ${ASAAS_API_KEY}
+      ASAAS_BASE_URL: ${ASAAS_BASE_URL}
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: 9000
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-couthealth}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-changeme123}
+      MINIO_BUCKET: ${MINIO_BUCKET:-couthealth}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks: [internal]
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/worker/Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      REDIS_URL: redis://redis:6379
+      DATABASE_URL: ${DATABASE_URL}
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks: [internal]
+
+  backup:
+    build:
+      context: ./infra/backup
+    restart: unless-stopped
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: ${POSTGRES_USER:-couthealth}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: ${POSTGRES_DB:-couthealth}
+    volumes:
+      - postgres_backups:/backups
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [internal]
+
+networks:
+  internal:
+    driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:
+  postgres_data:
+  postgres_backups:
+  redis_data:
+  minio_data:

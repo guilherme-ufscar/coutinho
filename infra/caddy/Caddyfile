@@ -1,0 +1,18 @@
+{
+	# Local dev: certificados internos autoassinados para *.localhost.
+	# Em produção, defina $DOMAIN/$APP_DOMAIN/$API_DOMAIN reais e o Caddy emite
+	# certificados públicos automaticamente (Let's Encrypt) — nenhuma mudança de bloco necessária.
+	local_certs
+}
+
+{$DOMAIN:localhost} {
+	reverse_proxy landing:3100
+}
+
+{$APP_DOMAIN:app.localhost} {
+	reverse_proxy web:80
+}
+
+{$API_DOMAIN:api.localhost} {
+	reverse_proxy api:3000
+}
