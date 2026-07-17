@@ -31,6 +31,9 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-couthealth}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
       POSTGRES_DB: ${POSTGRES_DB:-couthealth}
+    ports:
+      # Dev only: loopback-only, pra rodar `prisma migrate` do host. Remover/restringir em produção.
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -90,6 +93,9 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
+      args:
+        VITE_API_URL: https://${API_DOMAIN:-api.localhost}
+        VITE_SITE_URL: https://${DOMAIN:-localhost}
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
@@ -113,6 +119,8 @@ services:
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_CALLBACK_URL: https://${API_DOMAIN:-api.localhost}/auth/google/callback
+      APP_PUBLIC_URL: https://${APP_DOMAIN:-app.localhost}
       PAYMENT_PROVIDER: ${PAYMENT_PROVIDER:-mock}
       ASAAS_API_KEY: ${ASAAS_API_KEY}
       ASAAS_BASE_URL: ${ASAAS_BASE_URL}

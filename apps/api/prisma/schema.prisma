@@ -1,0 +1,410 @@
+// CoutHealth — modelo de domínio (escopo.md §5). Schema completo definido na Fase 3
+// para evitar migrations repetidas; services/controllers de cada bloco chegam fase a fase.
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CLIENT
+  PROFESSIONAL
+}
+
+enum PlanCode {
+  ESSENCIAL
+  PLUS
+  ELITE
+}
+
+enum Period {
+  MENSAL
+  TRIMESTRAL
+  SEMESTRAL
+  ANUAL
+}
+
+enum SubscriptionStatus {
+  PENDING
+  ACTIVE
+  CANCELED
+  EXPIRED
+}
+
+enum PaymentProviderName {
+  MOCK
+  ASAAS
+}
+
+enum PaymentStatus {
+  PENDING
+  APPROVED
+  FAILED
+  REFUNDED
+}
+
+enum AnamnesisStatus {
+  RASCUNHO
+  ENVIADA
+  ANALISADA
+}
+
+enum Goal {
+  EMAGRECER
+  GANHAR_MASSA
+  SAUDE
+  LONGEVIDADE
+}
+
+enum BowelFunction {
+  NORMAL
+  CONSTIPACAO
+  DIARREIA
+  IRREGULAR
+}
+
+enum NotificationType {
+  PLANO_PUBLICADO
+  TREINO_ATUALIZADO
+  MENSAGEM
+  CONTEUDO_NOVO
+  PERSONALIZADA
+}
+
+enum LibraryContentType {
+  RECEITA
+  ARTIGO
+  VIDEO
+  MATERIAL
+}
+
+enum CheckInKind {
+  NUTRICAO
+  TREINO
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String?
+  googleId     String?   @unique
+  name         String
+  role         Role      @default(CLIENT)
+  consentedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  subscriptions   Subscription[]
+  anamnesis       Anamnesis?
+  mealPlans       MealPlan[]     @relation("ClientMealPlans")
+  workouts        Workout[]      @relation("ClientWorkouts")
+  assessments     Assessment[]
+  checkIns        CheckIn[]
+  notifications   Notification[]
+  threads         Thread[]       @relation("ClientThreads")
+  messagesSent    Message[]      @relation("MessageSender")
+  auditLogs       AuditLog[]     @relation("AuditActor")
+}
+
+// ---------- Planos, assinaturas e pagamento (Fase 3) ----------
+
+model Plan {
+  id           String   @id @default(cuid())
+  code         PlanCode @unique
+  name         String
+  tagline      String
+  monthlyPrice Float
+  features     Json
+
+  subscriptions Subscription[]
+}
+
+model Coupon {
+  id         String    @id @default(cuid())
+  code       String    @unique
+  percentOff Float
+  active     Boolean   @default(true)
+  expiresAt  DateTime?
+  createdAt  DateTime  @default(now())
+
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id               String             @id @default(cuid())
+  userId           String
+  user             User               @relation(fields: [userId], references: [id])
+  planId           String
+  plan             Plan               @relation(fields: [planId], references: [id])
+  period           Period
+  status           SubscriptionStatus @default(PENDING)
+  couponId         String?
+  coupon           Coupon?            @relation(fields: [couponId], references: [id])
+  startedAt        DateTime?
+  currentPeriodEnd DateTime?
+  createdAt        DateTime           @default(now())
+
+  payments Payment[]
+}
+
+model Payment {
+  id               String              @id @default(cuid())
+  subscriptionId   String
+  subscription     Subscription        @relation(fields: [subscriptionId], references: [id])
+  provider         PaymentProviderName
+  providerChargeId String?
+  amount           Float
+  status           PaymentStatus       @default(PENDING)
+  method           String?
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+}
+
+// ---------- Anamnese e avaliação física (Fase 4) ----------
+
+model Anamnesis {
+  id     String          @id @default(cuid())
+  userId String          @unique
+  user   User            @relation(fields: [userId], references: [id])
+  status AnamnesisStatus @default(RASCUNHO)
+
+  // Dados pessoais
+  sex        String?
+  birthDate  DateTime?
+  heightCm   Float?
+  weightKg   Float?
+  profession String?
+
+  // Objetivo
+  goal            Goal?
+  goalDescription String?
+
+  // Alimentação
+  mealsPerDay       Int?
+  waterLitersPerDay Float?
+  preferredFoods    String?
+  dislikedFoods     String?
+  supplements       String?
+  allergies         String?
+  intolerances      String?
+  previousDiets     String?
+
+  // Saúde
+  diseases                String?
+  medications             String?
+  surgeries               String?
+  alteredExams            String?
+  nutritionalDeficiencies String?
+  orthopedicIssues        String?
+  familyHistory           String?
+
+  // Sono
+  sleepQuality String?
+  sleepHours   Float?
+  sleepTime    String?
+  wakeTime     String?
+
+  // Função intestinal
+  bowelFunction BowelFunction?
+
+  // Hábitos
+  smokes       Boolean?
+  drinksAlcohol Boolean?
+
+  // Exercícios
+  activityLevel       String?
+  trainingSince        String?
+  trainingDaysPerWeek Int?
+  modality            String?
+  availableEquipment  String?
+  painfulExercises    String?
+  avoidedExercises    String?
+
+  currentStep  Int       @default(0)
+  submittedAt  DateTime?
+  analyzedAt   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Assessment {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  weightKg     Float?
+  waistCm      Float?
+  abdomenCm    Float?
+  armCm        Float?
+  thighCm      Float?
+  muscleMassKg Float?
+  fatMassKg    Float?
+  recordedAt   DateTime @default(now())
+}
+
+// ---------- Bancos de alimentos e exercícios (Fase 5) ----------
+
+model Food {
+  id       String  @id @default(cuid())
+  name     String
+  category String
+  kcal     Float
+  protein  Float
+  carbs    Float
+  fat      Float
+  notes    String?
+
+  mealItems MealItem[]
+}
+
+model ExerciseLibrary {
+  id          String  @id @default(cuid())
+  name        String
+  muscleGroup String
+  description String?
+  videoUrl    String?
+
+  workoutExercises WorkoutExercise[]
+}
+
+// ---------- Nutrição e treino publicados (Fase 5/6) ----------
+
+model MealPlan {
+  id          String    @id @default(cuid())
+  clientId    String
+  client      User      @relation("ClientMealPlans", fields: [clientId], references: [id])
+  createdById String?
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  meals Meal[]
+}
+
+model Meal {
+  id         String   @id @default(cuid())
+  mealPlanId String
+  mealPlan   MealPlan @relation(fields: [mealPlanId], references: [id])
+  time       String
+  name       String
+  notes      String?
+
+  items MealItem[]
+}
+
+model MealItem {
+  id            String @id @default(cuid())
+  mealId        String
+  meal          Meal   @relation(fields: [mealId], references: [id])
+  foodId        String
+  food          Food   @relation(fields: [foodId], references: [id])
+  quantityGrams Float
+  notes         String?
+}
+
+model Workout {
+  id          String    @id @default(cuid())
+  clientId    String
+  client      User      @relation("ClientWorkouts", fields: [clientId], references: [id])
+  letter      String
+  createdById String?
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  exercises WorkoutExercise[]
+}
+
+model WorkoutExercise {
+  id          String          @id @default(cuid())
+  workoutId   String
+  workout     Workout         @relation(fields: [workoutId], references: [id])
+  exerciseId  String
+  exercise    ExerciseLibrary @relation(fields: [exerciseId], references: [id])
+  sets        Int
+  reps        String
+  load        String?
+  restSeconds Int?
+  notes       String?
+  order       Int             @default(0)
+
+  logs ExerciseLog[]
+}
+
+model ExerciseLog {
+  id                String          @id @default(cuid())
+  workoutExerciseId String
+  workoutExercise   WorkoutExercise @relation(fields: [workoutExerciseId], references: [id])
+  performedAt       DateTime        @default(now())
+  notes             String?
+}
+
+// ---------- Biblioteca, mensagens, notificações, check-ins ----------
+
+model LibraryContent {
+  id          String             @id @default(cuid())
+  type        LibraryContentType
+  title       String
+  body        String?
+  mediaUrl    String?
+  publishedAt DateTime?
+  createdAt   DateTime           @default(now())
+}
+
+model Thread {
+  id        String    @id @default(cuid())
+  clientId  String
+  client    User      @relation("ClientThreads", fields: [clientId], references: [id])
+  createdAt DateTime  @default(now())
+
+  messages Message[]
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  threadId  String
+  thread    Thread   @relation(fields: [threadId], references: [id])
+  senderId  String
+  sender    User     @relation("MessageSender", fields: [senderId], references: [id])
+  body      String
+  createdAt DateTime @default(now())
+  readAt    DateTime?
+}
+
+model Notification {
+  id              String           @id @default(cuid())
+  userId          String?
+  user            User?            @relation(fields: [userId], references: [id])
+  type            NotificationType
+  title           String
+  body            String
+  audienceSegment String?
+  scheduledFor    DateTime?
+  sentAt          DateTime?
+  readAt          DateTime?
+  createdAt       DateTime         @default(now())
+}
+
+model CheckIn {
+  id         String      @id @default(cuid())
+  userId     String
+  user       User        @relation(fields: [userId], references: [id])
+  kind       CheckInKind
+  question   String
+  answer     String?
+  answeredAt DateTime?
+  createdAt  DateTime    @default(now())
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  actor      User?    @relation("AuditActor", fields: [actorId], references: [id])
+  action     String
+  entityType String
+  entityId   String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+}

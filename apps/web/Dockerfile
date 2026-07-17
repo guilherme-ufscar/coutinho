@@ -7,6 +7,10 @@ COPY apps/web/package.json apps/web/package.json
 RUN npm install --workspaces --include-workspace-root --ignore-scripts
 
 FROM base AS build
+ARG VITE_API_URL=https://api.localhost
+ARG VITE_SITE_URL=https://localhost
+ENV VITE_API_URL=${VITE_API_URL}
+ENV VITE_SITE_URL=${VITE_SITE_URL}
 COPY packages/ui packages/ui
 COPY packages/config packages/config
 COPY apps/web apps/web
