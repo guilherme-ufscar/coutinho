@@ -3,14 +3,19 @@
 	local_certs
 }
 
-{$DOMAIN:localhost} {
+# Prefixo http:// fixo: em produção o Caddy fica atrás do aaPanel/Nginx, que
+# termina o TLS e repassa em texto puro para 127.0.0.1:8080. DOMAIN/APP_DOMAIN/
+# API_DOMAIN devem continuar como hostname puro (sem esquema) no .env, pois
+# essas mesmas variáveis também são usadas para montar URLs https:// públicas
+# em outros serviços (NEXT_PUBLIC_*, VITE_*, CORS_ORIGINS etc).
+http://{$DOMAIN:localhost} {
 	reverse_proxy landing:3100
 }
 
-{$APP_DOMAIN:app.localhost} {
+http://{$APP_DOMAIN:app.localhost} {
 	reverse_proxy web:80
 }
 
-{$API_DOMAIN:api.localhost} {
+http://{$API_DOMAIN:api.localhost} {
 	reverse_proxy api:3000
 }
