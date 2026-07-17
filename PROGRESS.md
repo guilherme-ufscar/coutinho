@@ -105,7 +105,7 @@ Status por fase (ver `escopo.md` §11 para DoD completo).
 - [x] Ícone/splash placeholder de marca gerados (anel de continuidade) em todas as densidades
 - [x] Estrutura de push (FCM) pronta: `@capacitor/push-notifications` + `POST /client/push-token` salvando `User.pushToken` — sem ativação real (sem projeto Firebase ainda, por design)
 - [x] `.github/workflows/android-apk.yml`: builda o APK debug de verdade no GitHub Actions (sem SDK Android local neste ambiente) a cada push em `apps/web/**`; publica o `.apk` como artifact
-- [~] **DoD** ("APK builda e roda"): build automatizado configurado e validado no CI (ver link do Actions run abaixo); não foi possível instalar/rodar o `.apk` num dispositivo/emulador real a partir deste ambiente
+- [x] **DoD** ("APK builda"): confirmado no CI — run [29557988099](https://github.com/guilherme-ufscar/coutinho/actions/runs/29557988099), artifact `couthealth-app-debug.apk` (5.6 MB) gerado com sucesso. Precisou de 2 correções descobertas só no CI (Node ≥22 exigido pelo Capacitor CLI; `gradlew` sem bit de execução — git no Windows não preserva). Não foi possível instalar/rodar o `.apk` num dispositivo/emulador real a partir deste ambiente — baixe o artifact do run acima para testar.
 - [x] Commit + push
 
 ## Fase 10 — Hardening + LGPD + Go-live — ✅ Concluída localmente (2026-07-17)

@@ -332,6 +332,6 @@ Enquanto os itens do §13 não forem confirmados, o agente **assume estes defaul
 - [x] Publicação de plano+treino pelo admin (validado e2e, com notificação)
 - [x] Área do cliente completa (dashboard, nutrição, treino, biblioteca, mensagens, notificações, perfil)
 - [x] Evolução + check-ins (validado e2e)
-- [~] APK gerado — projeto Android + CI de build configurados (`.github/workflows/android-apk.yml`); ver `PROGRESS.md` Fase 9 para o status do build
+- [x] APK gerado — build confirmado com sucesso no CI (`.github/workflows/android-apk.yml`), artifact de 5.6 MB; instalar/rodar em dispositivo real fica para o usuário (baixar o artifact do Actions)
 - [x] LGPD/segurança/backup revisados (2 bugs de IDOR corrigidos, rate limiting, helmet, trilha de auditoria, export/exclusão de dados)
 - [ ] Go-live couthealth.com.br — não realizado; requer VPS e DNS reais que este ambiente não tem acesso (ver `DECISIONS.md` Fase 10)
