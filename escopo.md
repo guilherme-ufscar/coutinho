@@ -322,16 +322,16 @@ Enquanto os itens do §13 não forem confirmados, o agente **assume estes defaul
 ---
 
 ## 14. Checklist de acompanhamento
-- [ ] Nome do repo confirmado e criado
-- [ ] Fonte/licença e logo recebidos
-- [ ] Gateway e preços definidos
-- [ ] Telas geradas no Stitch (Fase 1) aprovadas
-- [ ] Landing no ar
-- [ ] Fluxo cadastro→pagamento→liberação
-- [ ] Anamnese com "Responder depois"
-- [ ] Publicação de plano+treino pelo admin
-- [ ] Área do cliente completa
-- [ ] Evolução + check-ins
-- [ ] APK gerado
-- [ ] LGPD/segurança/backup revisados
-- [ ] Go-live couthealth.com.br
+- [x] Nome do repo confirmado e criado (`guilherme-ufscar/coutinho`)
+- [ ] Fonte/licença Luxora Grotesk e logo definitiva recebidos (usando fallback Space Grotesk + `logo.webp` — wordmark, não ícone)
+- [ ] Gateway e preços definidos (adapter Asaas pronto, mock ativo em dev; preços são placeholder configurável no admin)
+- [~] Telas geradas no Stitch (Fase 1) — pulado nesta sessão (tool sem reinício disponível); telas implementadas direto do Design DNA do `design-stitch.md`
+- [x] Landing no ar (3 direções em `/`, `/v2`, `/v3`)
+- [x] Fluxo cadastro→pagamento→liberação (validado e2e)
+- [x] Anamnese com "Responder depois" (validado e2e, com lembretes via worker)
+- [x] Publicação de plano+treino pelo admin (validado e2e, com notificação)
+- [x] Área do cliente completa (dashboard, nutrição, treino, biblioteca, mensagens, notificações, perfil)
+- [x] Evolução + check-ins (validado e2e)
+- [~] APK gerado — projeto Android + CI de build configurados (`.github/workflows/android-apk.yml`); ver `PROGRESS.md` Fase 9 para o status do build
+- [x] LGPD/segurança/backup revisados (2 bugs de IDOR corrigidos, rate limiting, helmet, trilha de auditoria, export/exclusão de dados)
+- [ ] Go-live couthealth.com.br — não realizado; requer VPS e DNS reais que este ambiente não tem acesso (ver `DECISIONS.md` Fase 10)
