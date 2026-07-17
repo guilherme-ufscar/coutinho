@@ -13,6 +13,8 @@ import { ExercisesModule } from "./exercises/exercises.module";
 import { LibraryModule } from "./library/library.module";
 import { MessagesModule } from "./messages/messages.module";
 import { AdminClientsModule } from "./admin-clients/admin-clients.module";
+import { NotificationsModule } from "./notifications/notifications.module";
+import { ClientModule } from "./client/client.module";
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { AdminClientsModule } from "./admin-clients/admin-clients.module";
     LibraryModule,
     MessagesModule,
     AdminClientsModule,
+    NotificationsModule,
+    ClientModule,
   ],
   controllers: [AppController],
   providers: [],

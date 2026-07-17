@@ -6,6 +6,13 @@ import { AuthCallbackPage } from "./pages/AuthCallbackPage";
 import { PlansPage } from "./pages/PlansPage";
 import { CheckoutPage } from "./pages/CheckoutPage";
 import { AnamnesisPage } from "./pages/anamnesis/AnamnesisPage";
+import { DashboardPage } from "./pages/client/DashboardPage";
+import { NutritionPage } from "./pages/client/NutritionPage";
+import { WorkoutPage } from "./pages/client/WorkoutPage";
+import { LibraryPage } from "./pages/client/LibraryPage";
+import { MessagesPage } from "./pages/client/MessagesPage";
+import { NotificationsPage } from "./pages/client/NotificationsPage";
+import { ProfilePage } from "./pages/client/ProfilePage";
 import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage";
 import { AdminClientDetailPage } from "./pages/admin/AdminClientDetailPage";
 import { AdminFoodsPage } from "./pages/admin/AdminFoodsPage";
@@ -67,10 +74,58 @@ export function App() {
       />
 
       <Route
-        path="/app/*"
+        path="/app"
         element={
           <ProtectedRoute>
-            <Placeholder title="Área do cliente" />
+            <DashboardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/app/nutricao"
+        element={
+          <ProtectedRoute>
+            <NutritionPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/app/treino"
+        element={
+          <ProtectedRoute>
+            <WorkoutPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/app/biblioteca"
+        element={
+          <ProtectedRoute>
+            <LibraryPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/app/mensagens"
+        element={
+          <ProtectedRoute>
+            <MessagesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/app/notificacoes"
+        element={
+          <ProtectedRoute>
+            <NotificationsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/app/perfil"
+        element={
+          <ProtectedRoute>
+            <ProfilePage />
           </ProtectedRoute>
         }
       />

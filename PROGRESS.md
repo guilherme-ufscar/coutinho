@@ -10,7 +10,7 @@ Status por fase (ver `escopo.md` §11 para DoD completo).
 | 3 | Auth + Planos + Pagamento | ✅ Concluída |
 | 4 | Onboarding (anamnese) | ✅ Concluída |
 | 5 | Painel do profissional | ✅ Concluída |
-| 6 | Área do cliente | ⏳ Pendente |
+| 6 | Área do cliente | ✅ Concluída |
 | 7 | Evolução + Check-ins | ⏳ Pendente |
 | 8 | Admin sem código | ⏳ Pendente |
 | 9 | APK (Capacitor) | ⏳ Pendente |
@@ -71,6 +71,14 @@ Status por fase (ver `escopo.md` §11 para DoD completo).
 - [x] Seeds: 52 alimentos e 53 exercícios (nomes reais, valores nutricionais aproximados — placeholder editável)
 - [x] Front: `/admin` (lista), `/admin/clientes/:id` (anamnese + builder de plano/treino + mensagens), `/admin/alimentos`, `/admin/exercicios`, `/admin/biblioteca`
 - [x] **DoD**: e2e via curl — login admin → lista clientes → monta e publica plano+treino → `Notification` confirmada no Postgres para o cliente certo → mensagens bidirecionais → RBAC bloqueia cliente em rota de admin (403)
+- [x] Commit + push
+
+## Fase 6 — Área do cliente — ✅ Concluída (2026-07-17)
+
+- [x] Backend: `ClientController` (`/client/dashboard`, `/client/nutrition`, `/client/workouts`) e `NotificationsController` (`/notifications/me`)
+- [x] Front: `ClientLayout` responsivo (sidebar desktop / bottom nav mobile via CSS media query), Dashboard, Nutrição (macros calculados por quantidade), Treino (por letra, com vídeo), Biblioteca (só publicados), Mensagens, Notificações (marcar como lida), Perfil
+- [x] **DoD**: e2e via curl — cliente vê exatamente o plano alimentar e treino publicados na Fase 5 (macros batendo: 128 kcal/100g de arroz), notificações de publicação presentes, biblioteca só mostra itens publicados (confirmado antes/depois de publicar)
+- [x] Todas as rotas `/app/*` respondendo 200 via Caddy
 - [x] Commit + push
 
 ## Pendências / bloqueios conhecidos

@@ -166,6 +166,22 @@ export const libraryApi = {
   remove: (id: string, token: string) => request<void>(`/library/${id}`, { method: "DELETE" }, token),
 };
 
+export const clientApi = {
+  dashboard: (token: string) => request<any>("/client/dashboard", {}, token),
+  nutrition: (token: string) => request<any>("/client/nutrition", {}, token),
+  workouts: (token: string) => request<any[]>("/client/workouts", {}, token),
+};
+
+export const notificationsApi = {
+  mine: (token: string) => request<any[]>("/notifications/me", {}, token),
+  markRead: (id: string, token: string) => request<any>(`/notifications/me/${id}/read`, { method: "POST" }, token),
+};
+
+export const messagesApi = {
+  mine: (token: string) => request<{ thread: any; messages: any[] }>("/messages/me", {}, token),
+  send: (body: string, token: string) => request<any>("/messages/me", { method: "POST", body: JSON.stringify({ body }) }, token),
+};
+
 export const paymentsApi = {
   checkout: (
     data: { planCode: string; period: string; couponCode?: string; method: "pix" | "cartao" },
