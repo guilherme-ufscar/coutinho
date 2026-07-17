@@ -36,6 +36,22 @@ export default function LandingClinical() {
           </p>
           <Button href={`${APP_URL}/criar-conta`}>Criar conta</Button>
 
+          <div style={{ position: "relative", maxWidth: 720, margin: "var(--sp-12) auto 0", borderRadius: "var(--r-lg)", overflow: "hidden" }}>
+            <img
+              src="https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=1400&q=75"
+              alt=""
+              loading="lazy"
+              style={{ width: "100%", height: 280, objectFit: "cover", display: "block" }}
+            />
+            <div
+              aria-hidden
+              style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 35%, rgba(11,12,13,0.9) 100%)" }}
+            />
+            <p style={{ position: "absolute", left: "var(--sp-6)", right: "var(--sp-6)", bottom: "var(--sp-4)", color: "var(--white)", fontWeight: 600, fontSize: "var(--fs-body-lg)", margin: 0, textAlign: "left" }}>
+              Decisão clínica sempre humana — nunca automatizada.
+            </p>
+          </div>
+
           <div style={{ display: "flex", justifyContent: "center", gap: "var(--sp-12)", marginTop: "var(--sp-16)", flexWrap: "wrap" }}>
             {howItWorks.map((step, i) => (
               <div key={step.step} style={{ maxWidth: 180, textAlign: "left" }}>
@@ -57,20 +73,28 @@ export default function LandingClinical() {
 
         {/* Diferenciais — texto denso, confiança */}
         <section style={{ padding: "var(--sp-16) var(--sp-6)", background: "var(--ink-800)" }}>
-          <div style={{ maxWidth: 720, margin: "0 auto" }}>
-            <h2 className="display" style={{ fontSize: "var(--fs-title-lg)", fontWeight: 600, marginBottom: "var(--sp-8)", textAlign: "center" }}>
-              Método antes de tecnologia
-            </h2>
-            <div style={{ display: "flex", flexDirection: "column", gap: "var(--sp-8)" }}>
-              {differentiators.map((d) => (
-                <div key={d.title} style={{ display: "flex", gap: "var(--sp-6)", alignItems: "baseline" }}>
-                  <span style={{ color: "var(--text-tertiary)", fontSize: "var(--fs-caption)", minWidth: 24 }}>—</span>
-                  <div>
-                    <h3 style={{ fontSize: "var(--fs-body-lg)", fontWeight: 600, margin: "0 0 6px" }}>{d.title}</h3>
-                    <p style={{ color: "var(--text-secondary)", fontSize: "var(--fs-body-sm)", lineHeight: 1.6, margin: 0 }}>{d.description}</p>
+          <div style={{ maxWidth: 1080, margin: "0 auto", display: "flex", gap: "var(--sp-12)", flexWrap: "wrap", alignItems: "flex-start" }}>
+            <img
+              src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=75"
+              alt=""
+              loading="lazy"
+              style={{ flex: "1 1 320px", maxWidth: 380, width: "100%", height: 420, objectFit: "cover", borderRadius: "var(--r-lg)", border: "1px solid var(--border-hairline)" }}
+            />
+            <div style={{ flex: "2 1 420px" }}>
+              <h2 className="display" style={{ fontSize: "var(--fs-title-lg)", fontWeight: 600, marginBottom: "var(--sp-8)" }}>
+                Método antes de tecnologia
+              </h2>
+              <div style={{ display: "flex", flexDirection: "column", gap: "var(--sp-8)" }}>
+                {differentiators.map((d) => (
+                  <div key={d.title} style={{ display: "flex", gap: "var(--sp-6)", alignItems: "baseline" }}>
+                    <span style={{ color: "var(--text-tertiary)", fontSize: "var(--fs-caption)", minWidth: 24 }}>—</span>
+                    <div>
+                      <h3 style={{ fontSize: "var(--fs-body-lg)", fontWeight: 600, margin: "0 0 6px" }}>{d.title}</h3>
+                      <p style={{ color: "var(--text-secondary)", fontSize: "var(--fs-body-sm)", lineHeight: 1.6, margin: 0 }}>{d.description}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </section>

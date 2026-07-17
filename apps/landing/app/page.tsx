@@ -13,6 +13,12 @@ export const metadata: Metadata = {
   description: hero.subheadline,
 };
 
+const diffImages = [
+  "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=800&q=75",
+  "https://images.unsplash.com/photo-1571731956672-f2b94d7dd0cb?auto=format&fit=crop&w=800&q=75",
+  "https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=800&q=75",
+];
+
 export default function LandingCinematic() {
   return (
     <>
@@ -28,7 +34,10 @@ export default function LandingCinematic() {
             padding: "var(--sp-8) var(--sp-6)",
             overflow: "hidden",
             backgroundImage:
-              "radial-gradient(ellipse at 20% -10%, rgba(247,190,0,0.14), transparent 55%), radial-gradient(ellipse at 100% 100%, rgba(74,79,84,0.35), transparent 60%)",
+              "radial-gradient(ellipse at 20% -10%, rgba(247,190,0,0.14), transparent 55%), radial-gradient(ellipse at 100% 100%, rgba(74,79,84,0.35), transparent 60%), linear-gradient(180deg, rgba(11,12,13,0.88) 0%, rgba(11,12,13,0.94) 55%, rgba(11,12,13,0.98) 100%), url(https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1800&q=70)",
+            backgroundSize: "auto, auto, auto, cover",
+            backgroundPosition: "center, center, center, center 35%",
+            backgroundRepeat: "no-repeat",
           }}
         >
           <div
@@ -103,10 +112,26 @@ export default function LandingCinematic() {
             Tecnologia nos bastidores, profissional na linha de frente
           </h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "var(--sp-6)" }}>
-            {differentiators.map((d) => (
-              <div key={d.title} style={{ borderLeft: "2px solid var(--accent)", paddingLeft: "var(--sp-4)" }}>
-                <h3 style={{ fontSize: "var(--fs-title-sm)", margin: "0 0 8px" }}>{d.title}</h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "var(--fs-body-sm)", margin: 0 }}>{d.description}</p>
+            {differentiators.map((d, i) => (
+              <div
+                key={d.title}
+                style={{
+                  background: "rgba(23,24,27,0.6)",
+                  border: "1px solid var(--border-hairline)",
+                  borderRadius: "var(--r-lg)",
+                  overflow: "hidden",
+                }}
+              >
+                <img
+                  src={diffImages[i]}
+                  alt=""
+                  loading="lazy"
+                  style={{ width: "100%", height: 170, objectFit: "cover", display: "block" }}
+                />
+                <div style={{ padding: "var(--sp-6)", borderTop: "2px solid var(--accent)" }}>
+                  <h3 style={{ fontSize: "var(--fs-title-sm)", margin: "0 0 8px" }}>{d.title}</h3>
+                  <p style={{ color: "var(--text-secondary)", fontSize: "var(--fs-body-sm)", margin: 0 }}>{d.description}</p>
+                </div>
               </div>
             ))}
           </div>

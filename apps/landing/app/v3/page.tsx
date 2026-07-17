@@ -13,6 +13,12 @@ export const metadata: Metadata = {
   description: hero.subheadline,
 };
 
+const diffImages = [
+  "https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=700&q=75",
+  "https://images.unsplash.com/photo-1571731956672-f2b94d7dd0cb?auto=format&fit=crop&w=700&q=75",
+  "https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=700&q=75",
+];
+
 const lightVars: React.CSSProperties = {
   ["--bg-base" as string]: "#EDEDED",
   ["--bg-surface" as string]: "#FFFFFF",
@@ -50,24 +56,38 @@ export default function LandingEditorial() {
               border: "48px solid rgba(247,190,0,0.12)",
             }}
           />
-          <div style={{ maxWidth: 1080, margin: "0 auto", position: "relative" }}>
-            <p style={{ color: "var(--ink-700)", fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase", fontSize: "var(--fs-caption)", marginBottom: "var(--sp-4)" }}>
-              {hero.eyebrow}
-            </p>
-            <h1
-              className="display"
-              style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)", lineHeight: 0.98, fontWeight: 700, margin: "0 0 var(--sp-8)", maxWidth: 900 }}
-            >
-              {hero.headline}
-            </h1>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--sp-8)", alignItems: "end" }}>
-              <p style={{ fontSize: "var(--fs-title-sm)", color: "var(--text-secondary)", margin: 0 }}>{hero.subheadline}</p>
-              <div style={{ display: "flex", gap: "var(--sp-4)", justifyContent: "flex-start" }}>
-                <Button href={`${APP_URL}/criar-conta`}>Criar conta</Button>
-                <Button variant="secondary" href="#como-funciona" style={{ borderColor: "var(--ink-700)", color: "var(--ink-700)" }}>
-                  Como funciona
-                </Button>
+          <div style={{ maxWidth: 1080, margin: "0 auto", position: "relative", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: "var(--sp-10)", alignItems: "center" }}>
+            <div>
+              <p style={{ color: "var(--ink-700)", fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase", fontSize: "var(--fs-caption)", marginBottom: "var(--sp-4)" }}>
+                {hero.eyebrow}
+              </p>
+              <h1
+                className="display"
+                style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)", lineHeight: 0.98, fontWeight: 700, margin: "0 0 var(--sp-8)" }}
+              >
+                {hero.headline}
+              </h1>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--sp-8)", alignItems: "end" }}>
+                <p style={{ fontSize: "var(--fs-title-sm)", color: "var(--text-secondary)", margin: 0 }}>{hero.subheadline}</p>
+                <div style={{ display: "flex", gap: "var(--sp-4)", justifyContent: "flex-start", flexWrap: "wrap" }}>
+                  <Button href={`${APP_URL}/criar-conta`}>Criar conta</Button>
+                  <Button variant="secondary" href="#como-funciona" style={{ borderColor: "var(--ink-700)", color: "var(--ink-700)" }}>
+                    Como funciona
+                  </Button>
+                </div>
               </div>
+            </div>
+            <div style={{ position: "relative" }}>
+              <div
+                aria-hidden
+                style={{ position: "absolute", top: -24, left: -24, width: 120, height: 120, borderRadius: "50%", border: "20px solid rgba(247,190,0,0.35)", zIndex: 0 }}
+              />
+              <img
+                src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=1200&q=75"
+                alt=""
+                loading="lazy"
+                style={{ position: "relative", width: "100%", height: 420, objectFit: "cover", borderRadius: "var(--r-lg)", zIndex: 1 }}
+              />
             </div>
           </div>
         </section>
@@ -100,8 +120,14 @@ export default function LandingEditorial() {
               Diferenciais
             </h2>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "var(--sp-8)" }}>
-              {differentiators.map((d) => (
+              {differentiators.map((d, i) => (
                 <div key={d.title}>
+                  <img
+                    src={diffImages[i]}
+                    alt=""
+                    loading="lazy"
+                    style={{ width: "100%", height: 150, objectFit: "cover", borderRadius: "var(--r-md)", marginBottom: "var(--sp-4)" }}
+                  />
                   <h3 style={{ fontSize: "var(--fs-title-sm)", margin: "0 0 8px" }}>{d.title}</h3>
                   <p style={{ color: "var(--gray-300)", fontSize: "var(--fs-body-sm)", margin: 0 }}>{d.description}</p>
                 </div>
