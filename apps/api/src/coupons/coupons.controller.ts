@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Param, Patch, Post, BadRequestException, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Patch, Post, BadRequestException, Req, UseGuards } from "@nestjs/common";
 import { IsBoolean, IsDateString, IsNumber, IsOptional, IsString } from "class-validator";
 import { Type } from "class-transformer";
 import { PrismaService } from "../prisma/prisma.service";
 import { ProfessionalGuard } from "../auth/professional.guard";
+import { AuditService } from "../audit/audit.service";
 
 class ValidateCouponDto {
   @IsString()
@@ -22,7 +23,7 @@ class UpdateCouponDto {
 
 @Controller("coupons")
 export class CouponsController {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private audit: AuditService) {}
 
   @Post("validate")
   async validate(@Body() dto: ValidateCouponDto) {
@@ -41,15 +42,19 @@ export class CouponsController {
 
   @Post("admin")
   @UseGuards(ProfessionalGuard)
-  create(@Body() dto: CreateCouponDto) {
-    return this.prisma.coupon.create({
+  async create(@Req() req: any, @Body() dto: CreateCouponDto) {
+    const coupon = await this.prisma.coupon.create({
       data: { code: dto.code.toUpperCase(), percentOff: dto.percentOff, expiresAt: dto.expiresAt ? new Date(dto.expiresAt) : undefined },
     });
+    this.audit.log(req.user.userId, "CREATE", "Coupon", coupon.id, { code: coupon.code });
+    return coupon;
   }
 
   @Patch("admin/:id")
   @UseGuards(ProfessionalGuard)
-  update(@Param("id") id: string, @Body() dto: UpdateCouponDto) {
-    return this.prisma.coupon.update({ where: { id }, data: dto });
+  async update(@Req() req: any, @Param("id") id: string, @Body() dto: UpdateCouponDto) {
+    const coupon = await this.prisma.coupon.update({ where: { id }, data: dto });
+    this.audit.log(req.user.userId, "UPDATE", "Coupon", coupon.id, { ...dto });
+    return coupon;
   }
 }

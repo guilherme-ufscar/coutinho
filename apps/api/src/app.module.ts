@@ -1,4 +1,6 @@
 import { Module } from "@nestjs/common";
+import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
+import { APP_GUARD } from "@nestjs/core";
 import { AppController } from "./app.controller";
 import { PrismaModule } from "./prisma/prisma.module";
 import { RemindersModule } from "./reminders/reminders.module";
@@ -18,9 +20,13 @@ import { ClientModule } from "./client/client.module";
 import { CheckInsModule } from "./checkins/checkins.module";
 import { AdminNotificationsModule } from "./admin-notifications/admin-notifications.module";
 import { AdminSubscriptionsModule } from "./admin-subscriptions/admin-subscriptions.module";
+import { AuditModule } from "./audit/audit.module";
 
 @Module({
   imports: [
+    // Rate limiting global — default 60 req/min por IP; endpoints sensíveis (auth) usam limite
+    // mais restrito via @Throttle() (ver auth.controller.ts).
+    ThrottlerModule.forRoot([{ ttl: 60_000, limit: 60 }]),
     PrismaModule,
     RemindersModule,
     AuthModule,
@@ -39,8 +45,9 @@ import { AdminSubscriptionsModule } from "./admin-subscriptions/admin-subscripti
     CheckInsModule,
     AdminNotificationsModule,
     AdminSubscriptionsModule,
+    AuditModule,
   ],
   controllers: [AppController],
-  providers: [],
+  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}

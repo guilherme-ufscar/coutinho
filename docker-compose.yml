@@ -124,6 +124,8 @@ services:
       PAYMENT_PROVIDER: ${PAYMENT_PROVIDER:-mock}
       ASAAS_API_KEY: ${ASAAS_API_KEY}
       ASAAS_BASE_URL: ${ASAAS_BASE_URL}
+      ASAAS_WEBHOOK_TOKEN: ${ASAAS_WEBHOOK_TOKEN}
+      CORS_ORIGINS: https://${DOMAIN:-localhost},https://${APP_DOMAIN:-app.localhost}
       MINIO_ENDPOINT: minio
       MINIO_PORT: 9000
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-couthealth}

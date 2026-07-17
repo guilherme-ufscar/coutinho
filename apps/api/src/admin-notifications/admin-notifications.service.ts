@@ -2,11 +2,12 @@ import { Injectable } from "@nestjs/common";
 import { Role } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { RemindersQueueService } from "../reminders/reminders-queue.service";
+import { AuditService } from "../audit/audit.service";
 import { CreateCampaignDto } from "./dto/create-campaign.dto";
 
 @Injectable()
 export class AdminNotificationsService {
-  constructor(private prisma: PrismaService, private reminders: RemindersQueueService) {}
+  constructor(private prisma: PrismaService, private reminders: RemindersQueueService, private audit: AuditService) {}
 
   private async resolveAudienceUserIds(audience: string): Promise<string[]> {
     if (audience === "all") {
@@ -20,12 +21,13 @@ export class AdminNotificationsService {
     return [...new Set(subs.map((s) => s.userId))];
   }
 
-  async create(dto: CreateCampaignDto) {
+  async create(actorId: string, dto: CreateCampaignDto) {
     const scheduledFor = dto.scheduledFor ? new Date(dto.scheduledFor) : null;
     const isFuture = scheduledFor && scheduledFor.getTime() > Date.now();
 
     if (isFuture) {
       await this.reminders.scheduleCampaign({ title: dto.title, body: dto.body, audience: dto.audience, sendAt: scheduledFor!.toISOString() });
+      this.audit.log(actorId, "SCHEDULE", "Campaign", undefined, { title: dto.title, audience: dto.audience, scheduledFor });
       return { status: "scheduled", scheduledFor };
     }
 
@@ -40,6 +42,7 @@ export class AdminNotificationsService {
         sentAt: new Date(),
       })),
     });
+    this.audit.log(actorId, "SEND", "Campaign", undefined, { title: dto.title, audience: dto.audience, recipients: userIds.length });
     return { status: "sent", recipients: userIds.length };
   }
 

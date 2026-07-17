@@ -1,12 +1,13 @@
-import { Body, Controller, Get, NotFoundException, Param, Patch, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, NotFoundException, Param, Patch, Req, UseGuards } from "@nestjs/common";
 import { ProfessionalGuard } from "../auth/professional.guard";
 import { PrismaService } from "../prisma/prisma.service";
+import { AuditService } from "../audit/audit.service";
 import { UpdateSubscriptionDto } from "./dto/update-subscription.dto";
 
 @Controller("admin/subscriptions")
 @UseGuards(ProfessionalGuard)
 export class AdminSubscriptionsController {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private audit: AuditService) {}
 
   @Get()
   list() {
@@ -17,7 +18,7 @@ export class AdminSubscriptionsController {
   }
 
   @Patch(":id")
-  async update(@Param("id") id: string, @Body() dto: UpdateSubscriptionDto) {
+  async update(@Req() req: any, @Param("id") id: string, @Body() dto: UpdateSubscriptionDto) {
     const data: any = {};
     if (dto.status) data.status = dto.status;
     if (dto.planCode) {
@@ -25,6 +26,8 @@ export class AdminSubscriptionsController {
       if (!plan) throw new NotFoundException("Plano não encontrado.");
       data.planId = plan.id;
     }
-    return this.prisma.subscription.update({ where: { id }, data });
+    const subscription = await this.prisma.subscription.update({ where: { id }, data });
+    this.audit.log(req.user.userId, "UPDATE", "Subscription", subscription.id, { ...dto });
+    return subscription;
   }
 }

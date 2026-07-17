@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, ForbiddenException, Get, NotFoundException, Param, Patch, Post, Req, UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { ProfessionalGuard } from "../auth/professional.guard";
 import { PrismaService } from "../prisma/prisma.service";
@@ -17,7 +17,10 @@ export class CheckInsController {
 
   @Patch("checkins/me/:id")
   @UseGuards(JwtAuthGuard)
-  answer(@Req() req: any, @Param("id") id: string, @Body() dto: AnswerCheckInDto) {
+  async answer(@Req() req: any, @Param("id") id: string, @Body() dto: AnswerCheckInDto) {
+    const checkIn = await this.prisma.checkIn.findUnique({ where: { id } });
+    if (!checkIn) throw new NotFoundException("Check-in não encontrado.");
+    if (checkIn.userId !== req.user.userId) throw new ForbiddenException();
     return this.prisma.checkIn.update({
       where: { id },
       data: { answer: dto.answer, answeredAt: new Date() },

@@ -14,7 +14,7 @@ Status por fase (ver `escopo.md` §11 para DoD completo).
 | 7 | Evolução + Check-ins | ✅ Concluída |
 | 8 | Admin sem código | ✅ Concluída |
 | 9 | APK (Capacitor) | ✅ Concluída |
-| 10 | Hardening + LGPD + Go-live | ⏳ Pendente |
+| 10 | Hardening + LGPD + Go-live | ✅ Concluída (localmente) — go-live real pendente de VPS/DNS |
 
 ## Fase 0 — Fundação — ✅ Concluída (2026-07-17)
 
@@ -106,6 +106,29 @@ Status por fase (ver `escopo.md` §11 para DoD completo).
 - [x] Estrutura de push (FCM) pronta: `@capacitor/push-notifications` + `POST /client/push-token` salvando `User.pushToken` — sem ativação real (sem projeto Firebase ainda, por design)
 - [x] `.github/workflows/android-apk.yml`: builda o APK debug de verdade no GitHub Actions (sem SDK Android local neste ambiente) a cada push em `apps/web/**`; publica o `.apk` como artifact
 - [~] **DoD** ("APK builda e roda"): build automatizado configurado e validado no CI (ver link do Actions run abaixo); não foi possível instalar/rodar o `.apk` num dispositivo/emulador real a partir deste ambiente
+- [x] Commit + push
+
+## Fase 10 — Hardening + LGPD + Go-live — ✅ Concluída localmente (2026-07-17)
+
+**Segurança (revisão encontrou e corrigiu 2 bugs reais de IDOR):**
+- [x] `NotificationsController.markRead` e `CheckInsController.answer` não verificavam se o recurso pertencia ao usuário autenticado — qualquer cliente logado podia marcar notificação/responder check-in de outra pessoa. Corrigido (403 se não for o dono) e **validado** com dois usuários reais via curl.
+- [x] Webhook do Asaas (`POST /payments/webhook/asaas`) não validava origem — qualquer um podia forjar uma aprovação de pagamento. Agora exige o header `asaas-access-token` batendo com `ASAAS_WEBHOOK_TOKEN`; sem o env configurado, recusa por padrão (testado: 401).
+- [x] Rate limiting (`@nestjs/throttler`): 60 req/min global, 5/min em `/auth/register`, 10/min em `/auth/login`.
+- [x] `helmet()` para headers de segurança HTTP; CORS restrito a `DOMAIN`/`APP_DOMAIN` em produção (`CORS_ORIGINS`).
+- [x] Criptografia em trânsito: TLS automático via Caddy (já coberto desde a Fase 0).
+
+**LGPD:**
+- [x] Trilha de auditoria (`AuditLog`, schema já existia desde a Fase 0 mas nunca era populado): agora registra publicação de plano/treino, criação/edição de cupom, alteração de assinatura, campanhas de notificação e export/exclusão de dados. Confirmado no Postgres via smoke test.
+- [x] Portabilidade de dados: `GET /client/export` (baixa tudo em JSON) + botão "Baixar meus dados" no Perfil.
+- [x] Direito ao esquecimento: `POST /client/request-deletion` anonimiza a conta (nome/e-mail/login removidos; histórico de pagamentos/planos retido sem identificar a pessoa, LGPD art. 16) + botão de confirmação no Perfil.
+- [x] Consentimento explícito no cadastro (já existia desde a Fase 3) + páginas de Política de Privacidade/Termos (Fase 2, com nota de que o texto final precisa de revisão jurídica real).
+
+**Backups:** já cobertos desde a Fase 0 (rotina diária do Postgres em `infra/backup`).
+
+**Deploy no VPS / go-live real:** **não realizado** — este ambiente não tem acesso a um VPS, DNS do domínio real ou credenciais de produção. Preparei tudo para isso (Caddy com HTTPS automático por domínio real, `.env.example` documentando a troca de `*.localhost` para `couthealth.com.br`, `docker-compose.yml` já é o mesmo arquivo usado em dev e produção), mas o passo de efetivamente provisionar um servidor e apontar o DNS é uma ação com custo/acesso externo que só o usuário pode autorizar e executar.
+
+**Smoke test**: como não há produção real, rodei um smoke test abrangente contra a stack local "como se fosse produção" (todos os containers, HTTPS via Caddy) cobrindo: landing, health da API, cadastro, os dois fixes de IDOR (confirmados bloqueando acesso cruzado), webhook sem token (401), export LGPD, rota SPA. Esse é o substituto possível para "smoke test e2e em produção" dentro deste ambiente.
+
 - [x] Commit + push
 
 ## Pendências / bloqueios conhecidos

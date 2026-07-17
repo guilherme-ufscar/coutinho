@@ -170,6 +170,8 @@ export const clientApi = {
   dashboard: (token: string) => request<any>("/client/dashboard", {}, token),
   nutrition: (token: string) => request<any>("/client/nutrition", {}, token),
   workouts: (token: string) => request<any[]>("/client/workouts", {}, token),
+  exportData: (token: string) => request<any>("/client/export", {}, token),
+  requestDeletion: (token: string) => request<{ ok: boolean }>("/client/request-deletion", { method: "POST" }, token),
 };
 
 export const notificationsApi = {

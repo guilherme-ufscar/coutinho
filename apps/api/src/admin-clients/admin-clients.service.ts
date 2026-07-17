@@ -1,12 +1,13 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { Role } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
+import { AuditService } from "../audit/audit.service";
 import { CreateMealPlanDto } from "./dto/meal-plan.dto";
 import { CreateWorkoutDto } from "./dto/workout.dto";
 
 @Injectable()
 export class AdminClientsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private audit: AuditService) {}
 
   listClients() {
     return this.prisma.user.findMany({
@@ -70,6 +71,7 @@ export class AdminClientsService {
         sentAt: new Date(),
       },
     });
+    this.audit.log(professionalId, "PUBLISH", "MealPlan", mealPlan.id, { clientId: mealPlan.clientId });
     return mealPlan;
   }
 
@@ -109,6 +111,7 @@ export class AdminClientsService {
         sentAt: new Date(),
       },
     });
+    this.audit.log(professionalId, "PUBLISH", "Workout", workout.id, { clientId: workout.clientId, letter: workout.letter });
     return workout;
   }
 

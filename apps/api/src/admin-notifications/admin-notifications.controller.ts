@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
 import { ProfessionalGuard } from "../auth/professional.guard";
 import { AdminNotificationsService } from "./admin-notifications.service";
 import { CreateCampaignDto } from "./dto/create-campaign.dto";
@@ -14,7 +14,7 @@ export class AdminNotificationsController {
   }
 
   @Post()
-  create(@Body() dto: CreateCampaignDto) {
-    return this.service.create(dto);
+  create(@Req() req: any, @Body() dto: CreateCampaignDto) {
+    return this.service.create(req.user.userId, dto);
   }
 }
