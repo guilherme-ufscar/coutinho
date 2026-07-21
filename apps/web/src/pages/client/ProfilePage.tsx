@@ -53,7 +53,9 @@ export function ProfilePage() {
             <h2 className="display" style={{ fontSize: "1.25rem", margin: "0 0 4px" }}>
               {user?.name}
             </h2>
-            <p style={{ fontSize: "0.9375rem", color: "var(--text-secondary)", margin: 0 }}>Cliente CoutHealth</p>
+            <p style={{ fontSize: "0.9375rem", color: "var(--text-secondary)", margin: 0 }}>
+              {user?.role === "PROFESSIONAL" ? "Profissional CoutHealth" : "Cliente CoutHealth"}
+            </p>
           </div>
         </div>
 

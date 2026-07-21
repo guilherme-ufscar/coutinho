@@ -22,7 +22,7 @@ export function LoginPage() {
     try {
       const res = await authApi.login({ email, password });
       setSession(res.user, res.tokens.accessToken, res.tokens.refreshToken);
-      navigate(postAuthPath(location.search));
+      navigate(postAuthPath(location.search, res.user.role));
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Não foi possível entrar. Tente novamente.");
     } finally {

@@ -22,7 +22,7 @@ export function AuthCallbackPage() {
       .me(access)
       .then((user) => {
         setSession(user, access, refresh);
-        navigate(postAuthPath(""), { replace: true });
+        navigate(postAuthPath("", user.role), { replace: true });
       })
       .catch(() => setError("Não foi possível concluir o login com Google."));
     // eslint-disable-next-line react-hooks/exhaustive-deps

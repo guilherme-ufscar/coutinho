@@ -28,7 +28,7 @@ export function RegisterPage() {
     try {
       const res = await authApi.register({ name, email, password, consent });
       setSession(res.user, res.tokens.accessToken, res.tokens.refreshToken);
-      navigate(postAuthPath(location.search));
+      navigate(postAuthPath(location.search, res.user.role));
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Não foi possível criar sua conta. Tente novamente.");
     } finally {

@@ -1,5 +1,12 @@
-/** Após login/cadastro: se veio de um CTA de plano, vai direto pro checkout; senão, pro dashboard. */
-export function postAuthPath(search: string): string {
+/**
+ * Após login/cadastro: profissionais vão direto pro painel admin (nunca têm
+ * plano pra escolher); clientes seguem pro CTA de plano (se veio de um) ou
+ * pro dashboard.
+ */
+export function postAuthPath(search: string, role?: "CLIENT" | "PROFESSIONAL"): string {
+  if (role === "PROFESSIONAL") {
+    return "/admin";
+  }
   const params = new URLSearchParams(search);
   const plano = params.get("plano");
   const periodo = params.get("periodo");
