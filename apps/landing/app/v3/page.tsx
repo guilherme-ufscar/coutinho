@@ -143,8 +143,13 @@ export default function LandingEditorial() {
         </div>
       </section>
 
-      <PlansSection appUrl={APP_URL} />
-      <FaqSection />
+      {/* PlansSection/FaqSection usam Card/Accordion do design system, feitos para
+          fundo escuro (--bg-card, --text-secondary). Como esta variante é clara,
+          forçamos aqui a cor de texto padrão (branco) que os cards esperam. */}
+      <div style={{ background: "var(--ink-900)", color: "var(--white)" }}>
+        <PlansSection appUrl={APP_URL} />
+        <FaqSection />
+      </div>
 
       <section style={{ padding: "var(--sp-16) var(--sp-6)", textAlign: "center" }}>
         <h2 className="display" style={{ fontSize: "var(--fs-display-md)", margin: "0 0 var(--sp-6)" }}>
