@@ -87,7 +87,7 @@ export function AnamnesisPage() {
 
   if (alreadySubmitted) {
     return (
-      <main style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "var(--sp-6)" }}>
+      <main style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "var(--sp-6)", background: "var(--bg-base)" }}>
         <div>
           <ContinuityRing progress={1} size={64} />
           <h1 className="display" style={{ margin: "var(--sp-6) 0" }}>
@@ -107,47 +107,55 @@ export function AnamnesisPage() {
   const progress = (stepIndex + 1) / steps.length;
 
   return (
-    <main style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", padding: "var(--sp-8) var(--sp-6)" }}>
-      <div style={{ width: "100%", maxWidth: 560, display: "flex", flexDirection: "column", gap: "var(--sp-6)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-4)" }}>
-          <ContinuityRing progress={progress} size={48} strokeWidth={5} />
+    <main style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", padding: "var(--sp-12) var(--sp-6)", background: "var(--bg-base)" }}>
+      <div style={{ width: "100%", maxWidth: 560, display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "var(--sp-8)" }}>
           <div>
-            <p style={{ color: "var(--text-tertiary)", fontSize: "var(--fs-caption)", margin: 0 }}>
-              Etapa {stepIndex + 1} de {steps.length}
-            </p>
-            <h1 className="display" style={{ fontSize: "var(--fs-title-lg)", margin: 0 }}>
+            <span style={{ textTransform: "uppercase", fontSize: "0.75rem", letterSpacing: "0.12em", color: "var(--text-secondary)" }}>
+              Anamnese
+            </span>
+            <h1 className="display" style={{ fontSize: "1.75rem", margin: "8px 0 0" }}>
               {step.title}
             </h1>
           </div>
+          <ContinuityRing progress={progress} size={64} strokeWidth={4} label={`${stepIndex + 1}/${steps.length}`} />
         </div>
 
-        {step.description && <p style={{ color: "var(--text-secondary)", fontSize: "var(--fs-body-sm)", margin: 0 }}>{step.description}</p>}
+        <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border-hairline)", borderRadius: "var(--r-lg)", padding: "var(--sp-10)", marginBottom: "var(--sp-6)" }}>
+          {step.description && (
+            <p style={{ color: "var(--text-secondary)", fontSize: "var(--fs-body-sm)", margin: "0 0 var(--sp-5)" }}>{step.description}</p>
+          )}
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "var(--sp-4)" }}>
-          {step.fields.map((field) => (
-            <StepField
-              key={field.key}
-              field={field}
-              value={field.key.startsWith("assessment.") ? assessmentData[field.key.replace("assessment.", "")] : formData[field.key]}
-              onChange={(v) => setValue(field.key, v)}
-            />
-          ))}
+          <div style={{ display: "flex", flexDirection: "column", gap: "var(--sp-5)" }}>
+            {step.fields.map((field) => (
+              <StepField
+                key={field.key}
+                field={field}
+                value={field.key.startsWith("assessment.") ? assessmentData[field.key.replace("assessment.", "")] : formData[field.key]}
+                onChange={(v) => setValue(field.key, v)}
+              />
+            ))}
+          </div>
         </div>
 
-        {error && <p style={{ color: "var(--danger)", fontSize: "var(--fs-body-sm)", margin: 0 }}>{error}</p>}
+        {error && <p style={{ color: "var(--danger)", fontSize: "var(--fs-body-sm)", margin: "0 0 var(--sp-4)" }}>{error}</p>}
 
-        <div style={{ display: "flex", justifyContent: "space-between", gap: "var(--sp-3)" }}>
-          <Button variant="ghost" onClick={handleAnswerLater} disabled={saving}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "var(--sp-3)" }}>
+          <button
+            onClick={handleAnswerLater}
+            disabled={saving}
+            style={{ background: "none", border: "none", color: "var(--text-secondary)", fontSize: "0.875rem", cursor: saving ? "not-allowed" : "pointer", padding: 0 }}
+          >
             Responder depois
-          </Button>
+          </button>
           <div style={{ display: "flex", gap: "var(--sp-3)" }}>
             {stepIndex > 0 && (
-              <Button variant="secondary" onClick={() => setStepIndex((s) => s - 1)} disabled={saving}>
+              <Button variant="secondary" onClick={() => setStepIndex((s) => s - 1)} disabled={saving} style={{ borderRadius: "var(--r-full)" }}>
                 Voltar
               </Button>
             )}
-            <Button onClick={handleNext} disabled={saving}>
-              {saving ? "Salvando…" : isLast ? "Concluir" : "Avançar"}
+            <Button onClick={handleNext} disabled={saving} style={{ borderRadius: "var(--r-full)" }}>
+              {saving ? "Salvando…" : isLast ? "Concluir" : "Continuar"}
             </Button>
           </div>
         </div>

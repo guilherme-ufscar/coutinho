@@ -7,15 +7,17 @@ interface Props {
 }
 
 const inputStyle: React.CSSProperties = {
-  background: "var(--bg-surface)",
+  background: "var(--bg-base)",
   border: "1px solid var(--border-hairline)",
   borderRadius: "var(--r-md)",
-  padding: "12px 16px",
+  padding: "0 16px",
+  height: 44,
   color: "var(--text-primary)",
   fontFamily: "var(--font-body)",
   fontSize: "var(--fs-body-lg)",
   outline: "none",
   width: "100%",
+  boxSizing: "border-box",
 };
 
 export function StepField({ field, value, onChange }: Props) {
@@ -28,7 +30,7 @@ export function StepField({ field, value, onChange }: Props) {
           value={(value as string) ?? ""}
           onChange={(e) => onChange(e.target.value)}
           rows={3}
-          style={{ ...inputStyle, resize: "vertical", fontFamily: "var(--font-body)" }}
+          style={{ ...inputStyle, height: "auto", padding: "12px 16px", resize: "vertical", fontFamily: "var(--font-body)" }}
         />
       )}
 
@@ -63,16 +65,32 @@ export function StepField({ field, value, onChange }: Props) {
       )}
 
       {field.type === "boolean" && (
-        <div style={{ display: "flex", gap: "var(--sp-3)" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
           {[
             { v: true, label: "Sim" },
             { v: false, label: "Não" },
-          ].map((opt) => (
-            <label key={String(opt.v)} style={{ display: "flex", alignItems: "center", gap: 6, color: "var(--text-secondary)", fontSize: "var(--fs-body-sm)" }}>
-              <input type="radio" checked={value === opt.v} onChange={() => onChange(opt.v)} />
-              {opt.label}
-            </label>
-          ))}
+          ].map((opt) => {
+            const active = value === opt.v;
+            return (
+              <button
+                key={String(opt.v)}
+                type="button"
+                onClick={() => onChange(opt.v)}
+                style={{
+                  height: 48,
+                  borderRadius: "var(--r-md)",
+                  border: `1px solid ${active ? "var(--accent)" : "var(--border-hairline)"}`,
+                  background: active ? "rgba(247,190,0,0.1)" : "var(--bg-base)",
+                  color: active ? "var(--accent)" : "var(--text-primary)",
+                  fontWeight: 500,
+                  fontSize: "0.9375rem",
+                  cursor: "pointer",
+                }}
+              >
+                {opt.label}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

@@ -55,6 +55,11 @@
   --motion-fast: 160ms ease-out;
   --motion-slow: 240ms ease-out;
 
+  /* Layout de shells (admin/app) */
+  --sidebar-w: 260px;
+  --header-h: 76px;
+  --nav-hover: var(--ink-600);
+
   /* Superfícies semânticas */
   --bg-base: var(--ink-900);
   --bg-surface: var(--ink-800);

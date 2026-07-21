@@ -16,7 +16,7 @@ on:
       api_url:
         description: "URL da API que o APK vai consumir"
         required: false
-        default: "https://api.couthealth.com.br"
+        default: "https://couthealth.com.br/api"
 
 jobs:
   build-apk:
@@ -34,7 +34,7 @@ jobs:
       - name: Build do bundle web (só /app/*)
         working-directory: apps/web
         env:
-          VITE_API_URL: ${{ github.event.inputs.api_url || 'https://api.couthealth.com.br' }}
+          VITE_API_URL: ${{ github.event.inputs.api_url || 'https://couthealth.com.br/api' }}
         run: npm run build
 
       - name: Sincronizar com o projeto Android

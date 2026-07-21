@@ -1,4 +1,4 @@
-export const API_URL = import.meta.env.VITE_API_URL ?? "https://api.localhost";
+export const API_URL = import.meta.env.VITE_API_URL ?? "https://localhost/api";
 export const SITE_URL = import.meta.env.VITE_SITE_URL ?? "https://localhost";
 
 export class ApiError extends Error {

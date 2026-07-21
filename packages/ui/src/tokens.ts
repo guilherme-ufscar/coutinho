@@ -26,3 +26,8 @@ export const radius = {
 } as const;
 
 export const spacing = [4, 8, 12, 16, 24, 32, 48, 64] as const;
+
+export const layout = {
+  sidebarWidth: 260,
+  headerHeight: 76,
+} as const;

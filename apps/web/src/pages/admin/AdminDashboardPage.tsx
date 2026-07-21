@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Badge, Card } from "@couthealth/ui";
+import { Badge } from "@couthealth/ui";
 import { adminApi, type ClientListItem } from "../../lib/api";
 import { useAuth } from "../../lib/auth";
 import { AdminLayout } from "./AdminLayout";
@@ -27,32 +27,61 @@ export function AdminDashboardPage() {
   const pending = clients.filter((c) => c.anamnesis?.status === "ENVIADA");
 
   return (
-    <AdminLayout>
-      <h1 className="display" style={{ fontSize: "var(--fs-display-sm)", marginBottom: "var(--sp-2)" }}>
-        Clientes
-      </h1>
+    <AdminLayout title="Dashboard">
       <p style={{ color: "var(--text-secondary)", marginBottom: "var(--sp-8)" }}>
         {pending.length > 0 ? `${pending.length} anamnese(s) aguardando análise.` : "Nenhuma anamnese pendente no momento."}
       </p>
 
+      <h2 className="display" style={{ fontSize: "var(--fs-title-sm)", margin: "0 0 var(--sp-4)" }}>
+        Clientes
+      </h2>
+
       {loading ? (
         <p style={{ color: "var(--text-secondary)" }}>Carregando…</p>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "var(--sp-3)" }}>
+        <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border-hairline)", borderRadius: "var(--r-lg)", overflow: "hidden" }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1.4fr 1.2fr 1fr auto",
+              alignItems: "center",
+              gap: "var(--sp-3)",
+              padding: "14px var(--sp-6)",
+              background: "var(--bg-base)",
+              fontSize: "var(--fs-caption)",
+              color: "var(--text-tertiary)",
+              fontWeight: 500,
+            }}
+          >
+            <span>Cliente</span>
+            <span>E-mail</span>
+            <span>Status</span>
+            <span />
+          </div>
           {clients.map((client) => {
             const status = statusLabel[client.anamnesis?.status ?? "RASCUNHO"];
             return (
-              <Link key={client.id} to={`/admin/clientes/${client.id}`} style={{ textDecoration: "none" }}>
-                <Card style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "var(--sp-3)" }}>
-                  <div>
-                    <p style={{ fontWeight: 600, color: "var(--text-primary)", margin: 0 }}>{client.name}</p>
-                    <p style={{ color: "var(--text-tertiary)", fontSize: "var(--fs-caption)", margin: "4px 0 0" }}>{client.email}</p>
-                  </div>
-                  <div style={{ display: "flex", gap: "var(--sp-2)", alignItems: "center" }}>
-                    <Badge tone={status.tone}>{status.label}</Badge>
-                    {client.subscriptions[0] && <Badge>{client.subscriptions[0].plan.name}</Badge>}
-                  </div>
-                </Card>
+              <Link
+                key={client.id}
+                to={`/admin/clientes/${client.id}`}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1.4fr 1.2fr 1fr auto",
+                  alignItems: "center",
+                  gap: "var(--sp-3)",
+                  padding: "14px var(--sp-6)",
+                  borderTop: "1px solid var(--border-hairline)",
+                  textDecoration: "none",
+                  color: "inherit",
+                }}
+              >
+                <span style={{ fontWeight: 600 }}>{client.name}</span>
+                <span style={{ color: "var(--text-tertiary)", fontSize: "var(--fs-caption)" }}>{client.email}</span>
+                <span style={{ display: "flex", gap: "var(--sp-2)", flexWrap: "wrap" }}>
+                  <Badge tone={status.tone}>{status.label}</Badge>
+                  {client.subscriptions[0] && <Badge>{client.subscriptions[0].plan.name}</Badge>}
+                </span>
+                <span style={{ color: "var(--accent)", fontWeight: 600, fontSize: "var(--fs-caption)" }}>Ver →</span>
               </Link>
             );
           })}

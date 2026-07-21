@@ -227,28 +227,34 @@ export function AdminClientDetailPage() {
 
   if (!client || !id) {
     return (
-      <AdminLayout>
+      <AdminLayout title="Cliente">
         <p style={{ color: "var(--text-secondary)" }}>Carregando…</p>
       </AdminLayout>
     );
   }
 
   return (
-    <AdminLayout>
-      <h1 className="display" style={{ fontSize: "var(--fs-display-sm)" }}>
-        {client.name}
-      </h1>
-      <p style={{ color: "var(--text-secondary)", marginBottom: "var(--sp-8)" }}>{client.email}</p>
+    <AdminLayout
+      title={
+        <span>
+          {client.name}
+          <span style={{ display: "block", fontFamily: "var(--font-body)", fontWeight: 400, fontSize: "var(--fs-caption)", color: "var(--text-tertiary)" }}>
+            {client.email}
+          </span>
+        </span>
+      }
+    >
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: "var(--sp-6)", alignItems: "start" }}>
+        <Card>
+          <h3 style={{ marginTop: 0 }}>Anamnese</h3>
+          <AnamnesisSummary anamnesis={client.anamnesis ?? {}} />
+        </Card>
 
-      <Card style={{ marginBottom: "var(--sp-6)" }}>
-        <h3 style={{ marginTop: 0 }}>Anamnese</h3>
-        <AnamnesisSummary anamnesis={client.anamnesis ?? {}} />
-      </Card>
-
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "var(--sp-6)" }}>
-        <MealPlanBuilder clientId={id} />
-        <WorkoutBuilder clientId={id} />
-        <MessagesPanel clientId={id} />
+        <div style={{ display: "flex", flexDirection: "column", gap: "var(--sp-6)" }}>
+          <MealPlanBuilder clientId={id} />
+          <WorkoutBuilder clientId={id} />
+          <MessagesPanel clientId={id} />
+        </div>
       </div>
     </AdminLayout>
   );

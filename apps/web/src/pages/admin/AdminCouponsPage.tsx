@@ -31,29 +31,53 @@ export function AdminCouponsPage() {
   }
 
   return (
-    <AdminLayout>
-      <h1 className="display" style={{ fontSize: "var(--fs-display-sm)", marginBottom: "var(--sp-6)" }}>
-        Cupons
-      </h1>
-
+    <AdminLayout title="Cupons">
       <Card style={{ marginBottom: "var(--sp-6)", display: "flex", gap: "var(--sp-3)", alignItems: "end", maxWidth: 480 }}>
         <TextField label="Código" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} />
         <TextField label="Desconto (%)" type="number" value={percentOff} onChange={(e) => setPercentOff(e.target.value)} />
-        <Button onClick={create}>Criar cupom</Button>
+        <Button onClick={create} style={{ borderRadius: "var(--r-full)" }}>
+          + Criar cupom
+        </Button>
       </Card>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border-hairline)", borderRadius: "var(--r-lg)", overflow: "hidden" }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr auto auto",
+            alignItems: "center",
+            gap: "var(--sp-3)",
+            padding: "12px var(--sp-4)",
+            background: "var(--bg-base)",
+            fontSize: "var(--fs-caption)",
+            color: "var(--text-tertiary)",
+            fontWeight: 500,
+          }}
+        >
+          <span>Código</span>
+          <span>Desconto</span>
+          <span>Status</span>
+          <span />
+        </div>
         {coupons.map((c) => (
-          <div key={c.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", background: "var(--bg-card)", borderRadius: 8, border: "1px solid var(--border-hairline)" }}>
-            <span>
-              <strong>{c.code}</strong> — {Math.round(c.percentOff * 100)}% off
-            </span>
-            <span style={{ display: "flex", gap: 12, alignItems: "center" }}>
-              <Badge tone={c.active ? "accent" : "neutral"}>{c.active ? "Ativo" : "Inativo"}</Badge>
-              <Button variant="ghost" onClick={() => toggle(c)}>
-                {c.active ? "Desativar" : "Ativar"}
-              </Button>
-            </span>
+          <div
+            key={c.id}
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr auto auto",
+              alignItems: "center",
+              gap: "var(--sp-3)",
+              padding: "12px var(--sp-4)",
+              borderTop: "1px solid var(--border-hairline)",
+              fontSize: "var(--fs-body-sm)",
+            }}
+          >
+            <span className="display" style={{ fontWeight: 600 }}>{c.code}</span>
+            <span>{Math.round(c.percentOff * 100)}% off</span>
+            <Badge tone={c.active ? "accent" : "neutral"}>{c.active ? "Ativo" : "Inativo"}</Badge>
+            <Button variant="ghost" onClick={() => toggle(c)}>
+              {c.active ? "Desativar" : "Ativar"}
+            </Button>
           </div>
         ))}
       </div>

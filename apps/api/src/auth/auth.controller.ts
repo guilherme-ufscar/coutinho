@@ -45,7 +45,7 @@ export class AuthController {
   @UseGuards(AuthGuard("google"))
   async googleCallback(@Req() req: any, @Res() res: Response) {
     const { tokens } = await this.authService.loginWithGoogle(req.user);
-    const appUrl = process.env.APP_PUBLIC_URL ?? "https://app.localhost";
+    const appUrl = process.env.APP_PUBLIC_URL ?? "https://localhost";
     res.redirect(`${appUrl}/auth/callback?access=${tokens.accessToken}&refresh=${tokens.refreshToken}`);
   }
 }
