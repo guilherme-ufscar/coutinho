@@ -7,7 +7,7 @@ COPY apps/landing/package.json apps/landing/package.json
 RUN npm install --workspaces --include-workspace-root --ignore-scripts
 
 FROM base AS build
-ARG NEXT_PUBLIC_APP_URL=https://app.localhost
+ARG NEXT_PUBLIC_APP_URL=https://localhost
 ARG NEXT_PUBLIC_SITE_URL=https://localhost
 ENV NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
 ENV NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}

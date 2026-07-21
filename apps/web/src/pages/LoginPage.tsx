@@ -32,26 +32,32 @@ export function LoginPage() {
 
   return (
     <AuthLayout title="Entrar" subtitle="Continue seu acompanhamento.">
-      <form onSubmit={onSubmit} style={{ display: "flex", flexDirection: "column", gap: "var(--sp-4)" }}>
-        <TextField label="E-mail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
+      <form onSubmit={onSubmit} style={{ display: "flex", flexDirection: "column", gap: "var(--sp-5)" }}>
+        <TextField label="E-mail" type="email" placeholder="voce@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
         <TextField
           label="Senha"
           type="password"
+          placeholder="Sua senha"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
           autoComplete="current-password"
         />
         {error && <p style={{ color: "var(--danger)", fontSize: "var(--fs-body-sm)", margin: 0 }}>{error}</p>}
-        <Button type="submit" disabled={submitting}>
+        <Button type="submit" disabled={submitting} style={{ height: 48, justifyContent: "center" }}>
           {submitting ? "Entrando…" : "Entrar"}
         </Button>
-        <Button variant="secondary" href={`${API_URL}/auth/google`}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--text-tertiary)", fontSize: "0.8125rem" }}>
+          <div style={{ flex: 1, height: 1, background: "var(--border-hairline)" }} />
+          ou
+          <div style={{ flex: 1, height: 1, background: "var(--border-hairline)" }} />
+        </div>
+        <Button variant="secondary" href={`${API_URL}/auth/google`} style={{ height: 48, justifyContent: "center" }}>
           Continuar com Google
         </Button>
       </form>
-      <p style={{ textAlign: "center", fontSize: "var(--fs-body-sm)", color: "var(--text-secondary)", margin: 0 }}>
-        Ainda não tem conta? <Link to="/criar-conta" style={{ color: "var(--accent)" }}>Criar conta</Link>
+      <p style={{ textAlign: "center", fontSize: "0.875rem", color: "var(--text-secondary)", margin: 0 }}>
+        Não tem conta? <Link to="/criar-conta" style={{ color: "var(--accent)" }}>Criar conta</Link>
       </p>
     </AuthLayout>
   );

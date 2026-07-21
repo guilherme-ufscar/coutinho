@@ -12,36 +12,57 @@ const links = [
   { to: "/admin/assinaturas", label: "Planos & Assinaturas" },
 ];
 
-export function AdminLayout({ children }: { children: ReactNode }) {
+export function AdminLayout({
+  children,
+  title,
+  actions,
+}: {
+  children: ReactNode;
+  title?: ReactNode;
+  actions?: ReactNode;
+}) {
   return (
-    <div style={{ minHeight: "100vh", display: "flex" }}>
+    <div style={{ minHeight: "100vh", display: "flex", background: "var(--bg-base)" }}>
+      <style>{`
+        .admin-navitem { transition: background var(--motion-fast), color var(--motion-fast); }
+        .admin-navitem:hover { background: var(--nav-hover); }
+      `}</style>
       <aside
         style={{
-          width: 240,
+          width: "var(--sidebar-w)",
           flexShrink: 0,
+          background: "var(--bg-surface)",
           borderRight: "1px solid var(--border-hairline)",
-          padding: "var(--sp-6) var(--sp-4)",
+          padding: "var(--sp-6) 0",
           display: "flex",
           flexDirection: "column",
           gap: "var(--sp-8)",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-3)" }}>
-          <ContinuityRing progress={0.6} size={32} strokeWidth={4} />
-          <span className="display" style={{ fontWeight: 700 }}>CoutHealth</span>
+        <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-3)", padding: "0 var(--sp-6)" }}>
+          <ContinuityRing progress={0.6} size={26} strokeWidth={3} />
+          <span className="display" style={{ fontWeight: 700, fontSize: "1rem", color: "var(--accent)" }}>
+            CoutHealth
+          </span>
+          <span style={{ fontSize: "0.6875rem", color: "var(--text-tertiary)", marginLeft: "auto", letterSpacing: "0.06em" }}>
+            ADMIN
+          </span>
         </div>
-        <nav style={{ display: "flex", flexDirection: "column", gap: "var(--sp-2)" }}>
+        <nav style={{ display: "flex", flexDirection: "column" }}>
           {links.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
               end={link.end}
+              className="admin-navitem"
               style={({ isActive }) => ({
-                padding: "10px 12px",
-                borderRadius: "var(--r-md)",
-                color: isActive ? "var(--text-on-accent)" : "var(--text-secondary)",
-                background: isActive ? "var(--accent-grad, var(--accent))" : "transparent",
-                fontWeight: 600,
+                display: "flex",
+                alignItems: "center",
+                gap: "var(--sp-3)",
+                padding: "12px var(--sp-6)",
+                borderLeft: `3px solid ${isActive ? "var(--accent)" : "transparent"}`,
+                color: isActive ? "var(--text-primary)" : "var(--text-secondary)",
+                fontWeight: isActive ? 600 : 400,
                 fontSize: "var(--fs-body-sm)",
                 textDecoration: "none",
               })}
@@ -51,7 +72,28 @@ export function AdminLayout({ children }: { children: ReactNode }) {
           ))}
         </nav>
       </aside>
-      <main style={{ flex: 1, padding: "var(--sp-8)", overflow: "auto" }}>{children}</main>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
+        {title && (
+          <header
+            style={{
+              height: "var(--header-h)",
+              flexShrink: 0,
+              borderBottom: "1px solid var(--border-hairline)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "0 var(--sp-8)",
+              gap: "var(--sp-4)",
+            }}
+          >
+            <h1 className="display" style={{ fontSize: "var(--fs-title-lg)", margin: 0 }}>
+              {title}
+            </h1>
+            {actions && <div style={{ display: "flex", gap: "var(--sp-3)", alignItems: "center" }}>{actions}</div>}
+          </header>
+        )}
+        <main style={{ flex: 1, padding: "var(--sp-8)", overflow: "auto" }}>{children}</main>
+      </div>
     </div>
   );
 }

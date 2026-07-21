@@ -23,11 +23,15 @@ cp .env.example .env   # ajuste os segredos
 docker compose up --build
 ```
 
-- Landing: https://localhost
-- App/Admin: https://app.localhost
-- API: https://api.localhost/health
+Tudo concentrado em um único domínio, roteado por caminho (ver `infra/caddy/Caddyfile`):
 
-Certificados são gerados automaticamente pelo Caddy (`local_certs`) para os domínios `*.localhost` — o navegador pode pedir para confiar no certificado local na primeira vez.
+- Landing: https://localhost
+- App: https://localhost/app · Admin: https://localhost/admin
+- API: https://localhost/api/health
+
+Certificado é gerado automaticamente pelo Caddy (`local_certs`) para `localhost` — o navegador pode pedir para confiar no certificado local na primeira vez.
+
+Em produção basta apontar o DNS de `couthealth.com.br` pro VPS e setar `DOMAIN=couthealth.com.br` no `.env` (hostname puro, sem `http://`/`https://`) — não existem mais subdomínios `app.` / `api.` a configurar.
 
 ## Desenvolvimento sem Docker
 

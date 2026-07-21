@@ -35,16 +35,12 @@ export function AdminLibraryPage() {
   }
 
   return (
-    <AdminLayout>
-      <h1 className="display" style={{ fontSize: "var(--fs-display-sm)", marginBottom: "var(--sp-6)" }}>
-        Biblioteca
-      </h1>
-
+    <AdminLayout title="Biblioteca">
       <Card style={{ marginBottom: "var(--sp-6)", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "var(--sp-3)", alignItems: "end" }}>
         <TextField label="Título" value={title} onChange={(e) => setTitle(e.target.value)} />
         <div>
           <label style={{ fontSize: "var(--fs-body-sm)", fontWeight: 600, color: "var(--text-secondary)" }}>Tipo</label>
-          <select value={type} onChange={(e) => setType(e.target.value as LibraryItem["type"])} style={{ display: "block", width: "100%", marginTop: 8, background: "var(--bg-surface)", border: "1px solid var(--border-hairline)", borderRadius: "var(--r-md)", padding: "12px 16px", color: "var(--text-primary)" }}>
+          <select value={type} onChange={(e) => setType(e.target.value as LibraryItem["type"])} style={{ display: "block", width: "100%", marginTop: 8, background: "var(--bg-base)", border: "1px solid var(--border-hairline)", borderRadius: "var(--r-md)", padding: "12px 16px", color: "var(--text-primary)" }}>
             {types.map((t) => (
               <option key={t} value={t}>
                 {t}
@@ -53,15 +49,44 @@ export function AdminLibraryPage() {
           </select>
         </div>
         <TextField label="URL (vídeo/material)" value={mediaUrl} onChange={(e) => setMediaUrl(e.target.value)} />
-        <Button onClick={create}>Adicionar</Button>
+        <Button onClick={create} style={{ borderRadius: "var(--r-full)" }}>
+          + Adicionar
+        </Button>
       </Card>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border-hairline)", borderRadius: "var(--r-lg)", overflow: "hidden" }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1.6fr 1fr auto",
+            alignItems: "center",
+            gap: "var(--sp-3)",
+            padding: "12px var(--sp-4)",
+            background: "var(--bg-base)",
+            fontSize: "var(--fs-caption)",
+            color: "var(--text-tertiary)",
+            fontWeight: 500,
+          }}
+        >
+          <span>Título</span>
+          <span>Tipo</span>
+          <span>Status</span>
+        </div>
         {items.map((item) => (
-          <div key={item.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", background: "var(--bg-card)", borderRadius: 8, border: "1px solid var(--border-hairline)" }}>
-            <span>
-              {item.title} <Badge>{item.type}</Badge>
-            </span>
+          <div
+            key={item.id}
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1.6fr 1fr auto",
+              alignItems: "center",
+              gap: "var(--sp-3)",
+              padding: "12px var(--sp-4)",
+              borderTop: "1px solid var(--border-hairline)",
+              fontSize: "var(--fs-body-sm)",
+            }}
+          >
+            <span>{item.title}</span>
+            <span style={{ color: "var(--text-tertiary)" }}>{item.type}</span>
             {item.publishedAt ? (
               <Badge tone="accent">Publicado</Badge>
             ) : (

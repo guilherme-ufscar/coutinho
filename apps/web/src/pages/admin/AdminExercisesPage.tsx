@@ -32,26 +32,53 @@ export function AdminExercisesPage() {
   }
 
   return (
-    <AdminLayout>
-      <h1 className="display" style={{ fontSize: "var(--fs-display-sm)", marginBottom: "var(--sp-6)" }}>
-        Banco de exercícios
-      </h1>
-
+    <AdminLayout title="Banco de exercícios">
       <Card style={{ marginBottom: "var(--sp-6)", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "var(--sp-3)", alignItems: "end" }}>
         <TextField label="Nome" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
         <TextField label="Grupo muscular" value={form.muscleGroup} onChange={(e) => setForm({ ...form, muscleGroup: e.target.value })} />
         <TextField label="URL do vídeo (YouTube não listado)" value={form.videoUrl} onChange={(e) => setForm({ ...form, videoUrl: e.target.value })} />
-        <Button onClick={create}>Adicionar</Button>
+        <Button onClick={create} style={{ borderRadius: "var(--r-full)" }}>
+          + Adicionar
+        </Button>
       </Card>
 
-      <TextField label="Buscar" value={search} onChange={(e) => setSearch(e.target.value)} style={{ marginBottom: "var(--sp-4)" }} />
+      <TextField label="Buscar" value={search} onChange={(e) => setSearch(e.target.value)} style={{ marginBottom: "var(--sp-4)", maxWidth: 320 }} />
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border-hairline)", borderRadius: "var(--r-lg)", overflow: "hidden" }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1.4fr 1fr 1.4fr auto",
+            alignItems: "center",
+            gap: "var(--sp-3)",
+            padding: "12px var(--sp-4)",
+            background: "var(--bg-base)",
+            fontSize: "var(--fs-caption)",
+            color: "var(--text-tertiary)",
+            fontWeight: 500,
+          }}
+        >
+          <span>Nome</span>
+          <span>Grupo muscular</span>
+          <span>Vídeo</span>
+          <span />
+        </div>
         {exercises.map((ex) => (
-          <div key={ex.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", background: "var(--bg-card)", borderRadius: 8, border: "1px solid var(--border-hairline)" }}>
-            <span>
-              {ex.name} <span style={{ color: "var(--text-tertiary)", fontSize: "var(--fs-caption)" }}>({ex.muscleGroup})</span>
-            </span>
+          <div
+            key={ex.id}
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1.4fr 1fr 1.4fr auto",
+              alignItems: "center",
+              gap: "var(--sp-3)",
+              padding: "12px var(--sp-4)",
+              borderTop: "1px solid var(--border-hairline)",
+              fontSize: "var(--fs-body-sm)",
+            }}
+          >
+            <span>{ex.name}</span>
+            <span style={{ color: "var(--text-tertiary)" }}>{ex.muscleGroup}</span>
+            <span style={{ color: "var(--accent)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{ex.videoUrl}</span>
             <Button variant="ghost" onClick={() => remove(ex.id)}>
               Remover
             </Button>

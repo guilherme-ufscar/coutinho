@@ -3,19 +3,29 @@
 	local_certs
 }
 
-# Prefixo http:// fixo: em produção o Caddy fica atrás do aaPanel/Nginx, que
-# termina o TLS e repassa em texto puro para 127.0.0.1:8080. DOMAIN/APP_DOMAIN/
-# API_DOMAIN devem continuar como hostname puro (sem esquema) no .env, pois
-# essas mesmas variáveis também são usadas para montar URLs https:// públicas
-# em outros serviços (NEXT_PUBLIC_*, VITE_*, CORS_ORIGINS etc).
+# Prefixo http:// fixo: em produção o Caddy fica atrás do aaPanel/Cloudflare, que
+# termina o TLS e repassa em texto puro para 127.0.0.1:8080. DOMAIN deve continuar
+# como hostname puro (sem esquema) no .env, pois essa mesma variável também é usada
+# para montar URLs https:// públicas em outros serviços (NEXT_PUBLIC_*, VITE_*, CORS_ORIGINS etc).
+#
+# Tudo fica concentrado em um único domínio (https://{$DOMAIN}), roteado por caminho:
+#   /            -> landing (site institucional)
+#   /app/*       -> web (área do cliente)
+#   /admin/*     -> web (painel administrativo)
+#   /entrar, /criar-conta, /planos, /checkout, /anamnese, /auth/callback -> web (auth/onboarding)
+#   /assets/*    -> web (bundle estático do Vite)
+#   /api/*       -> api (prefixo /api removido antes de repassar)
 http://{$DOMAIN:localhost} {
-	reverse_proxy landing:3100
-}
+	handle_path /api/* {
+		reverse_proxy api:3000
+	}
 
-http://{$APP_DOMAIN:app.localhost} {
-	reverse_proxy web:80
-}
+	@web path /app/* /admin/* /assets/* /entrar /criar-conta /planos /checkout /anamnese /auth/callback
+	handle @web {
+		reverse_proxy web:80
+	}
 
-http://{$API_DOMAIN:api.localhost} {
-	reverse_proxy api:3000
+	handle {
+		reverse_proxy landing:3100
+	}
 }

@@ -8,8 +8,6 @@ services:
       - "127.0.0.1:8080:80"
     environment:
       DOMAIN: ${DOMAIN:-localhost}
-      APP_DOMAIN: ${APP_DOMAIN:-app.localhost}
-      API_DOMAIN: ${API_DOMAIN:-api.localhost}
     volumes:
       - ./infra/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
@@ -75,7 +73,7 @@ services:
       context: .
       dockerfile: apps/landing/Dockerfile
       args:
-        NEXT_PUBLIC_APP_URL: https://${APP_DOMAIN:-app.localhost}
+        NEXT_PUBLIC_APP_URL: https://${DOMAIN:-localhost}
         NEXT_PUBLIC_SITE_URL: https://${DOMAIN:-localhost}
     restart: unless-stopped
     environment:
@@ -93,7 +91,7 @@ services:
       context: .
       dockerfile: apps/web/Dockerfile
       args:
-        VITE_API_URL: https://${API_DOMAIN:-api.localhost}
+        VITE_API_URL: https://${DOMAIN:-localhost}/api
         VITE_SITE_URL: https://${DOMAIN:-localhost}
     restart: unless-stopped
     healthcheck:
@@ -118,13 +116,13 @@ services:
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-      GOOGLE_CALLBACK_URL: https://${API_DOMAIN:-api.localhost}/auth/google/callback
-      APP_PUBLIC_URL: https://${APP_DOMAIN:-app.localhost}
+      GOOGLE_CALLBACK_URL: https://${DOMAIN:-localhost}/api/auth/google/callback
+      APP_PUBLIC_URL: https://${DOMAIN:-localhost}
       PAYMENT_PROVIDER: ${PAYMENT_PROVIDER:-mock}
       ASAAS_API_KEY: ${ASAAS_API_KEY}
       ASAAS_BASE_URL: ${ASAAS_BASE_URL}
       ASAAS_WEBHOOK_TOKEN: ${ASAAS_WEBHOOK_TOKEN}
-      CORS_ORIGINS: https://${DOMAIN:-localhost},https://${APP_DOMAIN:-app.localhost}
+      CORS_ORIGINS: https://${DOMAIN:-localhost}
       MINIO_ENDPOINT: minio
       MINIO_PORT: 9000
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-couthealth}

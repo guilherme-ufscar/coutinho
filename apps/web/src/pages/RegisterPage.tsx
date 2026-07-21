@@ -37,38 +37,44 @@ export function RegisterPage() {
   }
 
   return (
-    <AuthLayout title="Criar conta" subtitle="Comece seu ciclo de acompanhamento contínuo.">
-      <form onSubmit={onSubmit} style={{ display: "flex", flexDirection: "column", gap: "var(--sp-4)" }}>
+    <AuthLayout title="Criar conta" subtitle="Comece seu acompanhamento contínuo.">
+      <form onSubmit={onSubmit} style={{ display: "flex", flexDirection: "column", gap: "var(--sp-5)" }}>
         <TextField label="Nome" value={name} onChange={(e) => setName(e.target.value)} required autoComplete="name" />
-        <TextField label="E-mail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
+        <TextField label="E-mail" type="email" placeholder="voce@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
         <TextField
           label="Senha"
           type="password"
+          placeholder="Mínimo 8 caracteres"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
           minLength={8}
           autoComplete="new-password"
         />
-        <label style={{ display: "flex", gap: "var(--sp-2)", alignItems: "flex-start", fontSize: "var(--fs-caption)", color: "var(--text-secondary)" }}>
-          <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} style={{ marginTop: 3 }} />
+        <Button type="submit" disabled={submitting} style={{ height: 48, justifyContent: "center", marginTop: 4 }}>
+          {submitting ? "Criando conta…" : "Criar conta"}
+        </Button>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--text-tertiary)", fontSize: "0.8125rem" }}>
+          <div style={{ flex: 1, height: 1, background: "var(--border-hairline)" }} />
+          ou
+          <div style={{ flex: 1, height: 1, background: "var(--border-hairline)" }} />
+        </div>
+        <Button variant="secondary" href={`${API_URL}/auth/google`} style={{ height: 48, justifyContent: "center" }}>
+          Continuar com Google
+        </Button>
+        <label style={{ display: "flex", gap: "var(--sp-2)", alignItems: "flex-start", fontSize: "0.8125rem", color: "var(--text-secondary)", marginTop: 4 }}>
+          <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} style={{ marginTop: 3, accentColor: "var(--accent)" }} />
           <span>
-            Autorizo o tratamento dos meus dados de saúde conforme a{" "}
+            Li e concordo com a{" "}
             <a href={`${SITE_URL}/politica-de-privacidade`} target="_blank" rel="noreferrer" style={{ color: "var(--accent)" }}>
               Política de Privacidade
-            </a>
-            .
+            </a>{" "}
+            e o tratamento dos meus dados de saúde conforme a LGPD.
           </span>
         </label>
         {error && <p style={{ color: "var(--danger)", fontSize: "var(--fs-body-sm)", margin: 0 }}>{error}</p>}
-        <Button type="submit" disabled={submitting}>
-          {submitting ? "Criando conta…" : "Criar conta"}
-        </Button>
-        <Button variant="secondary" href={`${API_URL}/auth/google`}>
-          Continuar com Google
-        </Button>
       </form>
-      <p style={{ textAlign: "center", fontSize: "var(--fs-body-sm)", color: "var(--text-secondary)", margin: 0 }}>
+      <p style={{ textAlign: "center", fontSize: "0.875rem", color: "var(--text-secondary)", margin: 0 }}>
         Já tem conta? <Link to="/entrar" style={{ color: "var(--accent)" }}>Entrar</Link>
       </p>
     </AuthLayout>
