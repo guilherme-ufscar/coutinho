@@ -1,8 +1,9 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import { Period, PlanCode } from "@prisma/client";
+import { Period, PlanCode, PaymentProviderName } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { MockPaymentProvider } from "./providers/mock-payment.provider";
 import { AsaasPaymentProvider } from "./providers/asaas-payment.provider";
+import { MercadoPagoPaymentProvider } from "./providers/mercadopago-payment.provider";
 import type { PaymentProvider } from "./payment-provider.interface";
 import { CheckoutDto } from "./dto/checkout.dto";
 
@@ -25,10 +26,21 @@ export class PaymentsService {
   constructor(
     private prisma: PrismaService,
     private mockProvider: MockPaymentProvider,
-    private asaasProvider: AsaasPaymentProvider
+    private asaasProvider: AsaasPaymentProvider,
+    private mercadoPagoProvider: MercadoPagoPaymentProvider
   ) {}
 
-  private resolveProvider(): PaymentProvider {
+  /**
+   * Gateway ativo agora é configurável pelo profissional no admin (`PaymentSettings`), sem precisar
+   * de redeploy. Sem nenhum gateway ativo no banco, cai no fallback legado por env var
+   * (`PAYMENT_PROVIDER=asaas`), preservando o setup anterior à existência desta tela.
+   */
+  private async resolveProvider(): Promise<PaymentProvider> {
+    const active = await this.prisma.paymentSettings.findFirst({
+      where: { active: true, accessTokenEncrypted: { not: null } },
+    });
+    if (active?.provider === PaymentProviderName.MERCADOPAGO) return this.mercadoPagoProvider;
+
     const configured = process.env.PAYMENT_PROVIDER ?? "mock";
     return configured === "asaas" ? this.asaasProvider : this.mockProvider;
   }
@@ -62,12 +74,16 @@ export class PaymentsService {
       },
     });
 
-    const provider = this.resolveProvider();
+    const provider = await this.resolveProvider();
     const charge = await provider.createCharge({
       subscriptionId: subscription.id,
       amount,
       method: dto.method,
       customer: { name: user.name, email: user.email },
+      token: dto.token,
+      paymentMethodId: dto.paymentMethodId,
+      installments: dto.installments,
+      payerDocNumber: dto.payerDocNumber,
     });
 
     const payment = await this.prisma.payment.create({

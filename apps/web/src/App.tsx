@@ -23,6 +23,7 @@ import { AdminLibraryPage } from "./pages/admin/AdminLibraryPage";
 import { AdminNotificationsPage } from "./pages/admin/AdminNotificationsPage";
 import { AdminCouponsPage } from "./pages/admin/AdminCouponsPage";
 import { AdminSubscriptionsPage } from "./pages/admin/AdminSubscriptionsPage";
+import { AdminPaymentSettingsPage } from "./pages/admin/AdminPaymentSettingsPage";
 import { ProtectedRoute } from "./lib/ProtectedRoute";
 
 function Placeholder({ title }: { title: string }) {
@@ -213,6 +214,15 @@ export function App() {
         element={
           <ProtectedRoute role="PROFESSIONAL">
             <AdminSubscriptionsPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/pagamentos"
+        element={
+          <ProtectedRoute role="PROFESSIONAL">
+            <AdminPaymentSettingsPage />
           </ProtectedRoute>
         }
       />

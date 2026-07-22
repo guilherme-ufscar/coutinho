@@ -248,9 +248,38 @@ export const adminPlansApi = {
     request<Plan>(`/plans/admin/${id}`, { method: "PATCH", body: JSON.stringify(data) }, token),
 };
 
+export interface CheckoutConfig {
+  provider: "MOCK" | "ASAAS" | "MERCADOPAGO";
+  publicKey?: string;
+}
+
 export const paymentsApi = {
   checkout: (
-    data: { planCode: string; period: string; couponCode?: string; method: "pix" | "cartao" },
+    data: {
+      planCode: string;
+      period: string;
+      couponCode?: string;
+      method: "pix" | "cartao";
+      token?: string;
+      paymentMethodId?: string;
+      installments?: number;
+      payerDocNumber?: string;
+    },
     token: string
   ) => request<CheckoutResponse>("/checkout", { method: "POST", body: JSON.stringify(data) }, token),
+  checkoutConfig: () => request<CheckoutConfig>("/payments/checkout-config"),
+};
+
+export interface PaymentSettings {
+  id: string;
+  provider: "MOCK" | "ASAAS" | "MERCADOPAGO";
+  active: boolean;
+  publicKey: string | null;
+  accessTokenLast4: string | null;
+}
+
+export const adminPaymentSettingsApi = {
+  list: (token: string) => request<PaymentSettings[]>("/admin/payment-settings", {}, token),
+  updateMercadoPago: (data: { accessToken?: string; publicKey: string; active: boolean }, token: string) =>
+    request<PaymentSettings>("/admin/payment-settings/mercadopago", { method: "PUT", body: JSON.stringify(data) }, token),
 };
