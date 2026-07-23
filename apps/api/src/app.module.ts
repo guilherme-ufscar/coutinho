@@ -21,8 +21,6 @@ import { CheckInsModule } from "./checkins/checkins.module";
 import { AdminNotificationsModule } from "./admin-notifications/admin-notifications.module";
 import { AdminSubscriptionsModule } from "./admin-subscriptions/admin-subscriptions.module";
 import { AuditModule } from "./audit/audit.module";
-import { CryptoModule } from "./crypto/crypto.module";
-import { PaymentSettingsModule } from "./payment-settings/payment-settings.module";
 
 @Module({
   imports: [
@@ -30,7 +28,6 @@ import { PaymentSettingsModule } from "./payment-settings/payment-settings.modul
     // mais restrito via @Throttle() (ver auth.controller.ts).
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 60 }]),
     PrismaModule,
-    CryptoModule,
     RemindersModule,
     AuthModule,
     PlansModule,
@@ -49,7 +46,6 @@ import { PaymentSettingsModule } from "./payment-settings/payment-settings.modul
     AdminNotificationsModule,
     AdminSubscriptionsModule,
     AuditModule,
-    PaymentSettingsModule,
   ],
   controllers: [AppController],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],

@@ -1,13 +1,9 @@
 import { Injectable, ServiceUnavailableException } from "@nestjs/common";
-import { PaymentProviderName } from "@prisma/client";
-import { PrismaService } from "../../prisma/prisma.service";
-import { CryptoService } from "../../crypto/crypto.service";
 import type { CreateChargeInput, CreateChargeResult, PaymentProvider } from "../payment-provider.interface";
 
 /**
  * Adapter Mercado Pago (PIX + cartão/Google Pay via token gerado no navegador pelo SDK do MP).
- * Credencial vem do banco (`PaymentSettings`, colada pelo profissional no admin), nunca de env var
- * — busca a cada chamada (sem cache) para uma troca de token no admin valer na hora.
+ * Credencial vem de env var (`MERCADOPAGO_ACCESS_TOKEN`), como os demais gateways.
  *
  * OBS: usa a API de Payments (`/v1/payments`), estável e amplamente documentada; o Mercado Pago
  * também oferece a Orders API mais nova — reavaliar migração se `/v1/payments` for descontinuada.
@@ -18,22 +14,16 @@ export class MercadoPagoPaymentProvider implements PaymentProvider {
 
   private readonly baseUrl = "https://api.mercadopago.com";
 
-  constructor(private prisma: PrismaService, private crypto: CryptoService) {}
-
-  private async getAccessToken(): Promise<string> {
-    const settings = await this.prisma.paymentSettings.findUnique({
-      where: { provider: PaymentProviderName.MERCADOPAGO },
-    });
-    if (!settings?.accessTokenEncrypted) {
-      throw new ServiceUnavailableException(
-        "Mercado Pago não configurado — peça para o profissional cadastrar o Access Token em Admin > Pagamentos."
-      );
+  private getAccessToken(): string {
+    const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
+    if (!accessToken) {
+      throw new ServiceUnavailableException("MERCADOPAGO_ACCESS_TOKEN não configurado.");
     }
-    return this.crypto.decrypt(settings.accessTokenEncrypted);
+    return accessToken;
   }
 
   async createCharge(input: CreateChargeInput): Promise<CreateChargeResult> {
-    const accessToken = await this.getAccessToken();
+    const accessToken = this.getAccessToken();
 
     const body: Record<string, unknown> = {
       transaction_amount: input.amount,

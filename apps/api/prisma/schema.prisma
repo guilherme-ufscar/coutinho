@@ -37,8 +37,6 @@ enum SubscriptionStatus {
 }
 
 enum PaymentProviderName {
-  MOCK
-  ASAAS
   MERCADOPAGO
 }
 
@@ -165,22 +163,6 @@ model Payment {
   method           String?
   createdAt        DateTime            @default(now())
   updatedAt        DateTime            @updatedAt
-}
-
-// Credenciais de gateway configuráveis pelo profissional (fase Mercado Pago) — token
-// nunca fica em texto puro nem em env var, só o próprio cliente tem acesso a ele.
-model PaymentSettings {
-  id                   String              @id @default(cuid())
-  provider             PaymentProviderName
-  active               Boolean             @default(false)
-  publicKey            String?
-  accessTokenEncrypted String?
-  accessTokenLast4     String?
-  updatedById          String?
-  updatedAt            DateTime            @updatedAt
-  createdAt            DateTime            @default(now())
-
-  @@unique([provider])
 }
 
 // ---------- Anamnese e avaliação física (Fase 4) ----------

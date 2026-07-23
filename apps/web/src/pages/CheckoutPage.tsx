@@ -38,7 +38,7 @@ export function CheckoutPage() {
   const amount = Number(params.get("valor") ?? 0) || undefined;
 
   useEffect(() => {
-    paymentsApi.checkoutConfig().then(setConfig).catch(() => setConfig({ provider: "MOCK" }));
+    paymentsApi.checkoutConfig().then(setConfig).catch(() => setConfig({ provider: "MERCADOPAGO" }));
   }, []);
 
   // Mercado Pago: monta o Payment Brick (cartão + Google Pay quando o dispositivo é elegível) só

@@ -1,10 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import { Period, PlanCode, PaymentProviderName } from "@prisma/client";
+import { Period, PlanCode } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
-import { MockPaymentProvider } from "./providers/mock-payment.provider";
-import { AsaasPaymentProvider } from "./providers/asaas-payment.provider";
 import { MercadoPagoPaymentProvider } from "./providers/mercadopago-payment.provider";
-import type { PaymentProvider } from "./payment-provider.interface";
 import { CheckoutDto } from "./dto/checkout.dto";
 
 const PERIOD_DISCOUNT: Record<Period, number> = {
@@ -25,25 +22,8 @@ const PERIOD_MONTHS: Record<Period, number> = {
 export class PaymentsService {
   constructor(
     private prisma: PrismaService,
-    private mockProvider: MockPaymentProvider,
-    private asaasProvider: AsaasPaymentProvider,
     private mercadoPagoProvider: MercadoPagoPaymentProvider
   ) {}
-
-  /**
-   * Gateway ativo agora é configurável pelo profissional no admin (`PaymentSettings`), sem precisar
-   * de redeploy. Sem nenhum gateway ativo no banco, cai no fallback legado por env var
-   * (`PAYMENT_PROVIDER=asaas`), preservando o setup anterior à existência desta tela.
-   */
-  private async resolveProvider(): Promise<PaymentProvider> {
-    const active = await this.prisma.paymentSettings.findFirst({
-      where: { active: true, accessTokenEncrypted: { not: null } },
-    });
-    if (active?.provider === PaymentProviderName.MERCADOPAGO) return this.mercadoPagoProvider;
-
-    const configured = process.env.PAYMENT_PROVIDER ?? "mock";
-    return configured === "asaas" ? this.asaasProvider : this.mockProvider;
-  }
 
   async checkout(userId: string, dto: CheckoutDto) {
     const [user, plan] = await Promise.all([
@@ -74,7 +54,7 @@ export class PaymentsService {
       },
     });
 
-    const provider = await this.resolveProvider();
+    const provider = this.mercadoPagoProvider;
     const charge = await provider.createCharge({
       subscriptionId: subscription.id,
       amount,
@@ -120,25 +100,4 @@ export class PaymentsService {
     });
   }
 
-  /** Webhook do Asaas — confirma pagamento assíncrono e libera a assinatura. */
-  async handleAsaasWebhook(payload: { payment?: { id: string; status: string } }) {
-    const chargeId = payload.payment?.id;
-    if (!chargeId) return { ok: false };
-
-    const payment = await this.prisma.payment.findFirst({ where: { providerChargeId: chargeId } });
-    if (!payment) return { ok: false };
-
-    const approved = payload.payment?.status === "CONFIRMED" || payload.payment?.status === "RECEIVED";
-    await this.prisma.payment.update({
-      where: { id: payment.id },
-      data: { status: approved ? "APPROVED" : "FAILED" },
-    });
-
-    if (approved) {
-      const subscription = await this.prisma.subscription.findUniqueOrThrow({ where: { id: payment.subscriptionId } });
-      await this.activateSubscription(subscription.id, subscription.period);
-    }
-
-    return { ok: true };
-  }
 }

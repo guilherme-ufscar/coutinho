@@ -19,8 +19,7 @@ export interface CreateChargeResult {
   pixQrCode?: string;
 }
 
-/** Interface comum a todos os gateways — ver escopo.md §13.0 (mock funcional + Asaas/Mercado Pago). */
 export interface PaymentProvider {
-  readonly name: "MOCK" | "ASAAS" | "MERCADOPAGO";
+  readonly name: "MERCADOPAGO";
   createCharge(input: CreateChargeInput): Promise<CreateChargeResult>;
 }
