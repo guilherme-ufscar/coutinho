@@ -40,10 +40,26 @@ export function PlansPage() {
   }
 
   const preselected = params.get("plano");
+  const inactive = params.get("motivo") === "inativo";
 
   return (
     <main style={{ minHeight: "100vh", padding: "var(--sp-16) var(--sp-6)", display: "flex", flexDirection: "column", gap: "var(--sp-8)" }}>
       <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--sp-4)" }}>
+        {inactive && (
+          <div
+            style={{
+              background: "var(--danger-bg, #3a1a1a)",
+              color: "var(--danger)",
+              border: "1px solid var(--danger)",
+              borderRadius: "var(--r-md)",
+              padding: "var(--sp-3) var(--sp-5)",
+              fontSize: "var(--fs-body-sm)",
+              maxWidth: 480,
+            }}
+          >
+            Sua assinatura está inativa ou expirada. Escolha um plano para liberar novamente sua conta.
+          </div>
+        )}
         <h1 className="display" style={{ fontSize: "var(--fs-display-sm)", margin: 0 }}>
           Escolha seu plano
         </h1>

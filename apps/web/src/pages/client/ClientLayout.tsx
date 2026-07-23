@@ -142,7 +142,9 @@ export function ClientLayout({ title, children }: { title?: string; children: Re
             <div style={{ fontSize: "0.875rem", fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
               {user?.name ?? "—"}
             </div>
-            <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>Plano ativo</div>
+            <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
+              {user?.hasActiveSubscription ? user.activePlanName ?? "Plano ativo" : "Sem plano ativo"}
+            </div>
           </div>
         </div>
       </aside>

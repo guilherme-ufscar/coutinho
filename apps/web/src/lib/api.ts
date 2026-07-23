@@ -28,6 +28,8 @@ export interface AuthUser {
   email: string;
   name: string;
   role: "CLIENT" | "PROFESSIONAL";
+  hasActiveSubscription: boolean;
+  activePlanName?: string;
 }
 
 export interface AuthResponse {

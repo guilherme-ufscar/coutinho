@@ -11,10 +11,6 @@ export interface AuthTokens {
   refreshToken: string;
 }
 
-function publicUser(user: { id: string; email: string; name: string; role: Role }) {
-  return { id: user.id, email: user.email, name: user.name, role: user.role };
-}
-
 @Injectable()
 export class AuthService {
   constructor(private prisma: PrismaService, private jwt: JwtService) {}
@@ -24,6 +20,23 @@ export class AuthService {
     return {
       accessToken: this.jwt.sign(payload, { secret: process.env.JWT_SECRET, expiresIn: "15m" }),
       refreshToken: this.jwt.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: "30d" }),
+    };
+  }
+
+  /** Assinatura ativa só existe depois do pagamento aprovado (ver PaymentsService.checkout). */
+  private async publicUser(user: { id: string; email: string; name: string; role: Role }) {
+    const activeSubscription = await this.prisma.subscription.findFirst({
+      where: { userId: user.id, status: "ACTIVE" },
+      include: { plan: true },
+      orderBy: { createdAt: "desc" },
+    });
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      hasActiveSubscription: Boolean(activeSubscription),
+      activePlanName: activeSubscription?.plan.name,
     };
   }
 
@@ -39,7 +52,7 @@ export class AuthService {
       data: { email: dto.email, name: dto.name, passwordHash, consentedAt: new Date() },
     });
 
-    return { user: publicUser(user), tokens: this.issueTokens(user) };
+    return { user: await this.publicUser(user), tokens: this.issueTokens(user) };
   }
 
   async login(dto: LoginDto) {
@@ -49,7 +62,7 @@ export class AuthService {
     const valid = await argon2.verify(user.passwordHash, dto.password);
     if (!valid) throw new UnauthorizedException("E-mail ou senha inválidos.");
 
-    return { user: publicUser(user), tokens: this.issueTokens(user) };
+    return { user: await this.publicUser(user), tokens: this.issueTokens(user) };
   }
 
   async loginWithGoogle(profile: { googleId: string; email: string; name: string }) {
@@ -64,7 +77,7 @@ export class AuthService {
         });
       }
     }
-    return { user: publicUser(user), tokens: this.issueTokens(user) };
+    return { user: await this.publicUser(user), tokens: this.issueTokens(user) };
   }
 
   async refresh(refreshToken: string) {
@@ -81,6 +94,6 @@ export class AuthService {
   async me(userId: string) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new UnauthorizedException();
-    return publicUser(user);
+    return this.publicUser(user);
   }
 }

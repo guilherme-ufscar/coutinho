@@ -72,7 +72,7 @@ export function App() {
       <Route
         path="/anamnese"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireSubscription>
             <AnamnesisPage />
           </ProtectedRoute>
         }
@@ -81,7 +81,7 @@ export function App() {
       <Route
         path="/app"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireSubscription>
             <DashboardPage />
           </ProtectedRoute>
         }
@@ -89,7 +89,7 @@ export function App() {
       <Route
         path="/app/nutricao"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireSubscription>
             <NutritionPage />
           </ProtectedRoute>
         }
@@ -97,7 +97,7 @@ export function App() {
       <Route
         path="/app/treino"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireSubscription>
             <WorkoutPage />
           </ProtectedRoute>
         }
@@ -105,7 +105,7 @@ export function App() {
       <Route
         path="/app/biblioteca"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireSubscription>
             <LibraryPage />
           </ProtectedRoute>
         }
@@ -113,7 +113,7 @@ export function App() {
       <Route
         path="/app/mensagens"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireSubscription>
             <MessagesPage />
           </ProtectedRoute>
         }
@@ -121,7 +121,7 @@ export function App() {
       <Route
         path="/app/evolucao"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireSubscription>
             <EvolutionPage />
           </ProtectedRoute>
         }
@@ -129,7 +129,7 @@ export function App() {
       <Route
         path="/app/checkin"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireSubscription>
             <CheckInPage />
           </ProtectedRoute>
         }
@@ -137,7 +137,7 @@ export function App() {
       <Route
         path="/app/notificacoes"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireSubscription>
             <NotificationsPage />
           </ProtectedRoute>
         }
@@ -145,7 +145,7 @@ export function App() {
       <Route
         path="/app/perfil"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireSubscription>
             <ProfilePage />
           </ProtectedRoute>
         }
