@@ -3,9 +3,29 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button, PeriodToggle, PlanCard, TextField, PERIOD_DISCOUNT, type Period } from "@couthealth/ui";
 import { plansApi, couponsApi, ApiError, type Plan } from "../lib/api";
 
+const PERIOD_MONTHS: Record<Period, number> = {
+  mensal: 1,
+  trimestral: 3,
+  semestral: 6,
+  anual: 12,
+};
+
 function formatPrice(monthly: number, period: Period) {
   const effective = monthly * (1 - PERIOD_DISCOUNT[period]);
   return effective.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+}
+
+/**
+ * Espelha o cálculo de PaymentsService.checkout() — só pra exibir/inicializar o Payment Brick com o
+ * valor certo; quem cobra de verdade é o backend. Cartão vira assinatura recorrente mensal (valor
+ * mensal com desconto, cobrado todo mês); PIX continua pagamento único do período inteiro.
+ */
+function monthlyAmount(monthly: number, period: Period, couponPercentOff: number) {
+  return Number((monthly * (1 - PERIOD_DISCOUNT[period]) * (1 - couponPercentOff)).toFixed(2));
+}
+
+function totalAmount(monthly: number, period: Period, couponPercentOff: number) {
+  return Number((monthly * PERIOD_MONTHS[period] * (1 - PERIOD_DISCOUNT[period]) * (1 - couponPercentOff)).toFixed(2));
 }
 
 export function PlansPage() {
@@ -14,7 +34,7 @@ export function PlansPage() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [period, setPeriod] = useState<Period>((params.get("periodo")?.toLowerCase() as Period) || "mensal");
   const [couponCode, setCouponCode] = useState("");
-  const [couponStatus, setCouponStatus] = useState<{ valid: boolean; message: string } | null>(null);
+  const [couponStatus, setCouponStatus] = useState<{ valid: boolean; message: string; percentOff?: number } | null>(null);
 
   useEffect(() => {
     plansApi.list().then(setPlans).catch(() => setPlans([]));
@@ -27,14 +47,20 @@ export function PlansPage() {
     }
     try {
       const res = await couponsApi.validate(couponCode);
-      setCouponStatus({ valid: true, message: `Cupom aplicado: -${Math.round(res.percentOff * 100)}%` });
+      setCouponStatus({ valid: true, message: `Cupom aplicado: -${Math.round(res.percentOff * 100)}%`, percentOff: res.percentOff });
     } catch (err) {
       setCouponStatus({ valid: false, message: err instanceof ApiError ? err.message : "Cupom inválido." });
     }
   }
 
   function selectPlan(planCode: string) {
+    const plan = plans.find((p) => p.code === planCode);
+    const couponPercentOff = couponStatus?.valid ? couponStatus.percentOff ?? 0 : 0;
     const query = new URLSearchParams({ plano: planCode.toLowerCase(), periodo: period });
+    if (plan) {
+      query.set("valorMensal", String(monthlyAmount(plan.monthlyPrice, period, couponPercentOff)));
+      query.set("valorTotal", String(totalAmount(plan.monthlyPrice, period, couponPercentOff)));
+    }
     if (couponStatus?.valid && couponCode) query.set("cupom", couponCode);
     navigate(`/checkout?${query.toString()}`);
   }

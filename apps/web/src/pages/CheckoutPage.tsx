@@ -35,7 +35,10 @@ export function CheckoutPage() {
   const planCode = (params.get("plano") ?? "").toUpperCase();
   const period = (params.get("periodo") ?? "mensal").toUpperCase();
   const couponCode = params.get("cupom") ?? undefined;
-  const amount = Number(params.get("valor") ?? 0) || undefined;
+  // Cartão vira assinatura recorrente mensal (cobra o valor mensal todo mês); PIX é pagamento único
+  // do período inteiro — ver DECISIONS.md e PaymentsService.checkout().
+  const monthlyAmount = Number(params.get("valorMensal") ?? 0) || undefined;
+  const totalAmount = Number(params.get("valorTotal") ?? 0) || undefined;
 
   useEffect(() => {
     paymentsApi.checkoutConfig().then(setConfig).catch(() => setConfig({ provider: "MERCADOPAGO" }));
@@ -53,9 +56,10 @@ export function CheckoutPage() {
         const mp = new (window as any).MercadoPago(config.publicKey, { locale: "pt-BR" });
         const bricksBuilder = mp.bricks();
         return bricksBuilder.create("payment", "mp-payment-brick", {
-          initialization: { amount: amount ?? 0 },
+          initialization: { amount: monthlyAmount ?? 0 },
           customization: {
-            paymentMethods: { creditCard: "all", debitCard: "all", googlePay: "all" },
+            // Assinatura recorrente mensal — sem parcelamento (não combina com cobrança mês a mês).
+            paymentMethods: { creditCard: "all", debitCard: "all", googlePay: "all", maxInstallments: 1 },
           },
           callbacks: {
             onReady: () => setBrickReady(true),
@@ -146,6 +150,12 @@ export function CheckoutPage() {
                 Cartão{config?.provider === "MERCADOPAGO" ? " / Google Pay" : ""}
               </Button>
             </div>
+            <p style={{ color: "var(--text-secondary)", fontSize: "var(--fs-body-sm)", margin: 0 }}>
+              {method === "pix"
+                ? totalAmount != null && `Pagamento único de ${totalAmount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} referente ao período.`
+                : monthlyAmount != null &&
+                  `Cobrança mensal recorrente de ${monthlyAmount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}, renovada automaticamente todo mês até o fim do período contratado.`}
+            </p>
             {error && <p style={{ color: "var(--danger)", fontSize: "var(--fs-body-sm)", margin: 0 }}>{error}</p>}
 
             {showBrick ? (
@@ -171,6 +181,16 @@ export function CheckoutPage() {
         {result && result.status === "PENDING" && result.pixQrCode && (
           <div style={{ textAlign: "center" }}>
             <p style={{ color: "var(--text-secondary)" }}>Escaneie o QR code do PIX para pagar:</p>
+            {result.pixQrCodeImage && (
+              <img
+                src={`data:image/png;base64,${result.pixQrCodeImage}`}
+                alt="QR code PIX"
+                style={{ width: 220, height: 220, margin: "0 auto", display: "block" }}
+              />
+            )}
+            <p style={{ color: "var(--text-secondary)", fontSize: "var(--fs-body-sm)", margin: "12px 0 4px" }}>
+              Ou copie o código PIX:
+            </p>
             <p style={{ wordBreak: "break-all", fontSize: "var(--fs-caption)", color: "var(--text-tertiary)" }}>{result.pixQrCode}</p>
           </div>
         )}

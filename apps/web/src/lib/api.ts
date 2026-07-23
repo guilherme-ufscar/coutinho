@@ -68,6 +68,7 @@ export interface CheckoutResponse {
   status: "PENDING" | "APPROVED" | "FAILED";
   checkoutUrl?: string;
   pixQrCode?: string;
+  pixQrCodeImage?: string;
   amount: number;
 }
 

@@ -27,6 +27,42 @@ async function handleAnamnesisReminder(userId: string) {
   console.log(`[worker] lembrete de anamnese criado para o usuário ${userId}`);
 }
 
+/** Cancela a assinatura recorrente no Mercado Pago quando o período contratado termina. */
+async function cancelMercadoPagoSubscription(mpPreapprovalId: string) {
+  const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
+  if (!accessToken) {
+    console.error("[worker] MERCADOPAGO_ACCESS_TOKEN não configurado — não foi possível cancelar a assinatura no Mercado Pago");
+    return;
+  }
+  const res = await fetch(`https://api.mercadopago.com/preapproval/${mpPreapprovalId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
+    body: JSON.stringify({ status: "cancelled" }),
+  });
+  if (!res.ok && res.status !== 404) {
+    console.error(`[worker] falha ao cancelar assinatura ${mpPreapprovalId} no Mercado Pago: ${await res.text()}`);
+  }
+}
+
+async function handleSubscriptionExpiring(subscriptionId: string) {
+  const subscription = await prisma.subscription.findUnique({ where: { id: subscriptionId } });
+  if (!subscription || subscription.status !== "ACTIVE") return; // já cancelada/trocada — nada a fazer
+
+  if (subscription.mpPreapprovalId) await cancelMercadoPagoSubscription(subscription.mpPreapprovalId);
+
+  await prisma.subscription.update({ where: { id: subscriptionId }, data: { status: "EXPIRED" } });
+  await prisma.notification.create({
+    data: {
+      userId: subscription.userId,
+      type: "PERSONALIZADA",
+      title: "Sua assinatura expirou",
+      body: "O período que você contratou chegou ao fim. Escolha um plano para continuar seu acompanhamento.",
+      sentAt: new Date(),
+    },
+  });
+  console.log(`[worker] assinatura ${subscriptionId} expirada — cliente ${subscription.userId} notificado`);
+}
+
 async function resolveCampaignAudience(audience: string): Promise<string[]> {
   if (audience === "all") {
     const clients = await prisma.user.findMany({ where: { role: Role.CLIENT }, select: { id: true } });
@@ -63,6 +99,10 @@ const worker = new Worker(
     }
     if (job.name === "send-campaign") {
       await handleCampaign(job.data);
+      return;
+    }
+    if (job.name === "subscription-expiring") {
+      await handleSubscriptionExpiring(job.data.subscriptionId);
       return;
     }
     console.log(`[worker] job desconhecido ignorado: ${job.name}`);

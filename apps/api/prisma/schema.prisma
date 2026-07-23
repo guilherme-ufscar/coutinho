@@ -147,6 +147,8 @@ model Subscription {
   coupon           Coupon?            @relation(fields: [couponId], references: [id])
   startedAt        DateTime?
   currentPeriodEnd DateTime?
+  // Id da assinatura (preapproval) no Mercado Pago — só existe pra pagamento com cartão (recorrente).
+  mpPreapprovalId  String?            @unique
   createdAt        DateTime           @default(now())
 
   payments Payment[]

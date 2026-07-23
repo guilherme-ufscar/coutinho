@@ -6,5 +6,6 @@ import { MercadoPagoPaymentProvider } from "./providers/mercadopago-payment.prov
 @Module({
   controllers: [PaymentsController],
   providers: [PaymentsService, MercadoPagoPaymentProvider],
+  exports: [MercadoPagoPaymentProvider],
 })
 export class PaymentsModule {}
